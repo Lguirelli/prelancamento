@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Pre lançamento— Guia</title>
+  <title>Vamos Escalar Juntos — Guia</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500&family=Poppins:wght@700&display=swap" rel="stylesheet">
@@ -43,15 +43,27 @@
       max-width:860px;
       width:100%;
       background:none;
-      margin:60px auto 0; /* espaço maior abaixo do header */
+      margin:60px auto 0;
     }
-    .title{font-family:Poppins, sans-serif; font-weight:700; font-size:28px; margin:0 0 6px}
-    .subtitle{margin:0 0 20px; color:var(--muted); font-size:14px}
+    .title{
+      font-family:Poppins, sans-serif;
+      font-weight:700;
+      font-size:28px;
+      margin:0 0 6px;
+      text-align:center;
+      color:var(--mint); /* verde da paleta Guia */
+    }
+    .subtitle{
+      margin:0 0 20px;
+      color:var(--muted);
+      font-size:14px;
+      text-align:center;
+    }
     .grid{display:grid; gap:14px}
     .grid-2{grid-template-columns:1fr 1fr}
     @media(max-width:720px){
       .grid-2{grid-template-columns:1fr}
-      .title, .subtitle, h3{text-align:center}
+      h3{text-align:center}
     }
     .field{display:grid; gap:8px}
     .input, textarea{
@@ -85,6 +97,9 @@
       border-radius:999px;
       padding:12px 18px;
       cursor:pointer;
+      display:block;
+      margin-left:auto;
+      margin-right:auto;
     }
     #otherField{margin-top:10px; display:none}
   </style>
@@ -97,23 +112,29 @@
 
   <main id="conteudo">
     <form class="card">
-      <h1 class="title">Atendimento Inteligente para o Seu Negócio</h1>
-      <p class="subtitle">Do primeiro contato à conversão: leve seu atendimento no WhatsApp para o próximo nível</p>
+      <h1 class="title">Vamos Escalar Juntos</h1>
+      <p class="subtitle">Com o toque da Guia. Agende uma demonstração 1:1 e acelere seu projeto de IA.</p>
 
       <div class="grid grid-2">
-        <div class="field"><input class="input" placeholder="Nome" required></div>
-        <div class="field"><input class="input" placeholder="Sobrenome" required></div>
+        <div class="field"><input class="input" placeholder="Nome*" required></div>
+        <div class="field"><input class="input" placeholder="Sobrenome*" required></div>
         <div class="field"><input class="input" placeholder="Nome da empresa*" required></div>
-        <div class="field"><input class="input" placeholder="Segmento de mercado" required></div>
-        <div class=\"field\" style=\"grid-column:1/-1\"><input type=\"tel\" class=\"input\" placeholder=\"Telefone*\" required pattern=\"[0-9\s()+-]{8,}\"></div>
+        <div class="field"><input class="input" placeholder="Segmento de mercado" ></div>
+        <div class="field" style="grid-column:1/-1"><input type="tel" class="input" placeholder="Telefone*" required pattern="[0-9\s()+-]{8,}"></div>
       </div>
 
+      <h3>Orçamento do Projeto</h3>
+      <label class="choice"><input type="radio" name="budget"> <span>&lt;R$50k</span></label>
+      <label class="choice"><input type="radio" name="budget"> <span>R$50–250k</span></label>
+      <label class="choice"><input type="radio" name="budget"> <span>R$250k–1M</span></label>
+      <label class="choice"><input type="radio" name="budget"> <span>R$1M+</span></label>
+
       <h3>Com o que podemos ajudar?</h3>
-      <label class="choice"><input type="checkbox" name="help"> <span>Lorem ipsum dolor sit amet</span></label>
-      <label class="choice"><input type="checkbox" name="help"> <span>Lorem ipsum dolor sit amet</span></label>
-      <label class="choice"><input type="checkbox" name="help"> <span>Lorem ipsum dolor sit amet</span></label>
-      <label class="choice"><input type="checkbox" name="help"> <span>Lorem ipsum dolor sit amet</span></label>
-      <label class="choice"><input type="checkbox" name="help"> <span>Lorem ipsum dolor sit amet</span></label>
+      <label class="choice"><input type="checkbox" name="help"> <span>Anotação e Curadoria de Dados para Autonomia</span></label>
+      <label class="choice"><input type="checkbox" name="help"> <span>Geração de Dados e RLHF para LLMs</span></label>
+      <label class="choice"><input type="checkbox" name="help"> <span>Soluções Empresariais: GenAI e Plataforma</span></label>
+      <label class="choice"><input type="checkbox" name="help"> <span>Teste e Avaliação de Modelos</span></label>
+      <label class="choice"><input type="checkbox" name="help"> <span>Setor Público: Defesa, Governo e ONGs</span></label>
       <label class="choice"><input type="checkbox" id="otherCheck" name="help" value="other"> <span>Outro</span></label>
 
       <div class="field" id="otherField">
