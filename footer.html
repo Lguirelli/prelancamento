@@ -36,16 +36,15 @@
 
     .container{width:100%; max-width:1120px; margin:0 auto; padding:0 20px}
     .muted{color:var(--muted)}
-    .tag{color:var(--mint)} /* mantém a estética da sua base */
+    .tag{color:var(--mint)}
 
     /* =========================================================
        Footer
        ========================================================= */
     .footer{
-      padding:32px 0;            /* respiro maior */
-      background:var(--dark);    /* fundo do rodapé */
-      color:var(--mauve);        /* texto sutil */
-      border-top:1px solid var(--border);
+      padding:32px 0;
+      background:transparent;     /* fundo totalmente transparente */
+      color:var(--mauve);
     }
 
     .footer .footer-content{
@@ -67,7 +66,7 @@
     }
 
     .footer .footer-links a:hover{
-      color:var(--purple); /* destaque no hover */
+      color:var(--purple);
     }
 
     /* Mobile */
@@ -86,12 +85,6 @@
   </style>
 </head>
 <body>
-
-  <!-- Conteúdo da página (placeholder) -->
-  <main class="container" style="min-height:60vh; padding:40px 0;">
-    <h1 style="font-family:var(--font-heading); margin:0 0 12px; color:#fff;">Exemplo de página</h1>
-    <p class="muted">Role até o final para ver o footer integrado.</p>
-  </main>
 
   <!-- Footer -->
   <footer class="footer">
