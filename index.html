@@ -36,19 +36,22 @@
       padding:40px 16px;
     }
     .card{
-      background:linear-gradient(180deg, var(--card), transparent);
       border:1px solid var(--border);
       border-radius:20px;
       box-shadow:var(--shadow);
       padding:28px;
       max-width:860px;
       width:100%;
+      background:none;
     }
     .title{font-family:Poppins, sans-serif; font-weight:700; font-size:28px; margin:0 0 6px}
     .subtitle{margin:0 0 20px; color:var(--muted); font-size:14px}
     .grid{display:grid; gap:14px}
     .grid-2{grid-template-columns:1fr 1fr}
-    @media(max-width:720px){.grid-2{grid-template-columns:1fr}}
+    @media(max-width:720px){
+      .grid-2{grid-template-columns:1fr}
+      .title, .subtitle, h3{text-align:center}
+    }
     .field{display:grid; gap:8px}
     label{font-size:12px; color:var(--muted)}
     .input, textarea{
@@ -82,43 +85,52 @@
   </style>
 </head>
 <body>
-  <form class="card">
-    <h1 class="title">Vamos Escalar Juntos</h1>
-    <p class="subtitle">Com o toque da Guia. Agende uma demonstração 1:1 e acelere seu projeto de IA.</p>
 
-    <div class="grid grid-2">
-      <div class="field"><label>Nome*</label><input class="input" required></div>
-      <div class="field"><label>Sobrenome*</label><input class="input" required></div>
-      <div class="field"><label>Nome da empresa*</label><input class="input" required></div>
-      <div class="field"><label>Cargo*</label><input class="input" required></div>
-      <div class="field" style="grid-column:1/-1"><label>E-mail corporativo*</label><input type="email" class="input" required></div>
-    </div>
+  <!-- Header compartilhado -->
+  <div id="site-header"></div>
+  <script src="header.js" defer></script>
 
-    <h3>Orçamento do Projeto</h3>
-    <label class="choice"><input type="radio" name="budget"> <span>&lt;R$50k</span></label>
-    <label class="choice"><input type="radio" name="budget"> <span>R$50–250k</span></label>
-    <label class="choice"><input type="radio" name="budget"> <span>R$250k–1M</span></label>
-    <label class="choice"><input type="radio" name="budget"> <span>R$1M+</span></label>
+  <main id="conteudo">
+    <form class="card">
+      <h1 class="title">Vamos Escalar Juntos</h1>
+      <p class="subtitle">Com o toque da Guia. Agende uma demonstração 1:1 e acelere seu projeto de IA.</p>
 
-    <h3>Com o que podemos ajudar?</h3>
-    <label class="choice"><input type="checkbox" name="help"> <span>Anotação e Curadoria de Dados para Autonomia</span></label>
-    <label class="choice"><input type="checkbox" name="help"> <span>Geração de Dados e RLHF para LLMs</span></label>
-    <label class="choice"><input type="checkbox" name="help"> <span>Soluções Empresariais: GenAI e Plataforma</span></label>
-    <label class="choice"><input type="checkbox" name="help"> <span>Teste e Avaliação de Modelos</span></label>
-    <label class="choice"><input type="checkbox" name="help"> <span>Setor Público: Defesa, Governo e ONGs</span></label>
-    <label class="choice"><input type="checkbox" id="otherCheck" name="help" value="other"> <span>Outro</span></label>
+      <div class="grid grid-2">
+        <div class="field"><input class="input" placeholder="Nome*" required></div>
+        <div class="field"><input class="input" placeholder="Sobrenome*" required></div>
+        <div class="field"><input class="input" placeholder="Nome da empresa*" required></div>
+        <div class="field"><input class="input" placeholder="Cargo*" required></div>
+        <div class="field" style="grid-column:1/-1"><input type="email" class="input" placeholder="E-mail corporativo*" required></div>
+      </div>
 
-    <div class="field" id="otherField" hidden>
-      <label>Descreva o “Outro”</label>
-      <input class="input" type="text" id="otherText" disabled>
-    </div>
+      <h3>Orçamento do Projeto</h3>
+      <label class="choice"><input type="radio" name="budget"> <span>&lt;R$50k</span></label>
+      <label class="choice"><input type="radio" name="budget"> <span>R$50–250k</span></label>
+      <label class="choice"><input type="radio" name="budget"> <span>R$250k–1M</span></label>
+      <label class="choice"><input type="radio" name="budget"> <span>R$1M+</span></label>
 
-    <h3>Descreva seu projeto*</h3>
-    <textarea required placeholder="Conte sobre dados, volume, cronograma e resultados esperados"></textarea>
+      <h3>Com o que podemos ajudar?</h3>
+      <label class="choice"><input type="checkbox" name="help"> <span>Anotação e Curadoria de Dados para Autonomia</span></label>
+      <label class="choice"><input type="checkbox" name="help"> <span>Geração de Dados e RLHF para LLMs</span></label>
+      <label class="choice"><input type="checkbox" name="help"> <span>Soluções Empresariais: GenAI e Plataforma</span></label>
+      <label class="choice"><input type="checkbox" name="help"> <span>Teste e Avaliação de Modelos</span></label>
+      <label class="choice"><input type="checkbox" name="help"> <span>Setor Público: Defesa, Governo e ONGs</span></label>
+      <label class="choice"><input type="checkbox" id="otherCheck" name="help" value="other"> <span>Outro</span></label>
 
-    <div class="field"><label><input type="checkbox" required> Eu concordo com a Política de Privacidade</label></div>
-    <button class="btn">Enviar</button>
-  </form>
+      <div class="field" id="otherField" hidden>
+        <input class="input" type="text" id="otherText" placeholder="Descreva o Outro" disabled>
+      </div>
+
+      <textarea required placeholder="Descreva seu projeto: dados, volume, cronograma e resultados esperados"></textarea>
+
+      <div class="field"><label><input type="checkbox" required> Eu concordo com a Política de Privacidade</label></div>
+      <button class="btn">Enviar</button>
+    </form>
+  </main>
+
+  <!-- Footer compartilhado -->
+  <div id="site-footer"></div>
+  <script src="footer.js" defer></script>
 
   <script>
     const otherCheck=document.getElementById('otherCheck');
