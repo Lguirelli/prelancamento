@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Let’s Scale Together — Guia</title>
+
+  <!-- Fonts (Poppins títulos, Inter corpo) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500&family=Poppins:wght@700&display=swap" rel="stylesheet">
+
+  <style>
+    /* =============================
+       Guia • Paleta e tokens
+       ============================= */
+    :root{
+      --bg:#0B0C10;              /* fundo principal */
+      --surface:rgba(255,255,255,.04);
+      --card:rgba(255,255,255,.03);
+      --border:rgba(255,255,255,.12);
+      --border-strong:rgba(255,255,255,.24);
+
+      --purple:#7269E3;          /* primária Guia */
+      --purple-strong:#625BD6;   /* variação */
+      --mint:#98DEA3;            /* acento */
+      --mauve:#A783A6;           /* neutro colorido */
+
+      --text:#ffffff;
+      --muted:rgba(214,218,229,.85);
+
+      --radius:16px;
+      --shadow:0 10px 30px rgba(0,0,0,.5);
+
+      --input-bg:rgba(255,255,255,.05);
+      --input-bg-hover:rgba(255,255,255,.08);
+      --input-bg-focus:rgba(114,105,227,.10);
+    }
+
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{
+      margin:0;
+      color:var(--text);
+      background:
+        radial-gradient(1200px 600px at 60% -250px, rgba(114,105,227,.18), transparent 60%),
+        radial-gradient(900px 480px at -10% 110%, rgba(152,222,163,.14), transparent 60%),
+        var(--bg);
+      font-family:Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+      line-height:1.45;
+      display:grid;
+      place-items:start center;
+      padding:40px 16px;
+    }
+
+    .wrap{ width:100%; max-width:860px }
+
+    .card{
+      background:linear-gradient(180deg, var(--card), transparent);
+      border:1px solid var(--border);
+      border-radius:20px;
+      box-shadow:var(--shadow);
+      padding:28px;
+      backdrop-filter:saturate(120%) blur(6px);
+    }
+
+    .title{
+      font-family:Poppins, Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+      font-weight:700; letter-spacing:.2px; margin:0 0 6px;
+      font-size:28px;
+    }
+    .subtitle{ margin:0 0 20px; color:var(--muted); font-size:14px }
+
+    /* ===== Grid ===== */
+    .grid{ display:grid; gap:14px }
+    .grid-2{ grid-template-columns:1fr 1fr }
+    @media (max-width:720px){ .grid-2{ grid-template-columns:1fr } }
+
+    /* ===== Campos ===== */
+    .field{ display:grid; gap:8px }
+    label{ font-size:12px; color:var(--muted) }
+    .input, textarea, select{
+      appearance:none;
+      background:var(--input-bg);
+      border:1px solid var(--border);
+      color:var(--text);
+      border-radius:12px;
+      padding:12px 14px;
+      font-size:14px;
+      outline:none; transition:.15s ease; width:100%;
+    }
+    .input:hover, textarea:hover{ background:var(--input-bg-hover) }
+    .input:focus, textarea:focus{
+      border-color:var(--purple);
+      background:var(--input-bg-focus);
+      box-shadow:0 0 0 3px rgba(114,105,227,.25);
+    }
+    ::placeholder{ color:#8E95A9 }
+
+    /* ===== Grupos ===== */
+    .group-title{ margin:18px 0 6px; font-size:13px; font-weight:700; color:#EAEAF7 }
+    .hint{ color:var(--muted); font-size:12px; margin-top:-2px }
+    .stack{ display:grid; gap:10px }
+
+    /* ===== Choices (radio/checkbox) ===== */
+    .choice{
+      display:flex; align-items:center; gap:10px;
+      padding:10px 12px; border:1px solid var(--border);
+      background:var(--surface); border-radius:12px;
+      transition:.15s ease;
+    }
+    .choice:hover{ border-color:var(--border-strong); background:var(--input-bg-hover) }
+    .choice input{ width:16px; height:16px; accent-color:var(--purple) }
+    .choice span{ font-size:14px }
+
+    /* ===== Textarea ===== */
+    textarea{ min-height:120px; resize:vertical }
+
+    /* ===== Consentimento ===== */
+    .consent{ display:flex; gap:10px; align-items:flex-start; font-size:13px; color:#dfe3f1 }
+    .consent input{ margin-top:2px; width:16px; height:16px; accent-color:var(--purple) }
+    .consent a{ color:#cfd3ff; text-decoration:underline; text-underline-offset:2px }
+
+    /* ===== Botão ===== */
+    .actions{ margin-top:16px; display:flex; justify-content:flex-start }
+    .btn{
+      appearance:none; border:0; cursor:pointer;
+      background:
+        linear-gradient(180deg, var(--purple), var(--purple-strong));
+      color:white; font-weight:700; letter-spacing:.2px; font-size:14px;
+      padding:12px 18px; border-radius:999px;
+      box-shadow:0 12px 28px rgba(114,105,227,.35), inset 0 1px 0 rgba(255,255,255,.2);
+      transition:transform .06s ease, filter .15s ease;
+    }
+    .btn:hover{ filter:saturate(110%) }
+    .btn:active{ transform:translateY(1px) }
+    .btn:disabled{ filter:grayscale(1) opacity(.6); cursor:not-allowed }
+
+    /* ===== Divisor decorativo ===== */
+    .divider{ height:1px; margin:18px 0; position:relative; background:var(--border) }
+    .divider:after{
+      content:""; position:absolute; left:50%; top:-5px; width:10px; height:10px;
+      background:var(--bg); border:1px solid var(--border); border-radius:999px;
+      transform:translateX(-50%); box-shadow:0 4px 12px rgba(0,0,0,.35);
+    }
+
+    /* ===== Acessibilidade ===== */
+    .sr-only{ position:absolute; width:1px; height:1px; padding:0; margin:-1px; overflow:hidden; clip:rect(0,0,0,0); border:0 }
+
+    /* ===== Responsivo extra ===== */
+    @media (min-width:1024px){ .card{ padding:32px } }
+  </style>
+</head>
+<body>
+
+  <div class="wrap">
+    <form class="card" action="#" method="post" novalidate>
+      <h1 class="title">Let’s Scale Together</h1>
+      <p class="subtitle">Com o toque da Guia. Agende uma demo 1:1 e acelere seu projeto de IA.</p>
+
+      <!-- Dados básicos -->
+      <div class="grid grid-2" role="group" aria-labelledby="info-basica">
+        <div class="field">
+          <label for="first">First name*</label>
+          <input id="first" name="first_name" class="input" type="text" placeholder="Seu primeiro nome" required>
+        </div>
+        <div class="field">
+          <label for="last">Last name*</label>
+          <input id="last" name="last_name" class="input" type="text" placeholder="Seu sobrenome" required>
+        </div>
+        <div class="field">
+          <label for="company">Company name*</label>
+          <input id="company" name="company" class="input" type="text" placeholder="Nome da empresa" required>
+        </div>
+        <div class="field">
+          <label for="job">Job title*</label>
+          <input id="job" name="job_title" class="input" type="text" placeholder="Cargo" required>
+        </div>
+        <div class="field" style="grid-column:1 / -1">
+          <label for="email">Work email*</label>
+          <input id="email" name="email" class="input" type="email" inputmode="email" placeholder="voce@empresa.com" required>
+        </div>
+      </div>
+
+      <div class="divider" aria-hidden="true"></div>
+
+      <!-- Orçamento -->
+      <div class="group">
+        <div class="group-title">Project Budget</div>
+        <div class="hint">Selecione uma faixa</div>
+        <div class="stack" style="margin-top:6px">
+          <label class="choice"><input type="radio" name="budget" value="<50k" required> <span>&lt;$50k</span></label>
+          <label class="choice"><input type="radio" name="budget" value="50-250k"> <span>$50–250k</span></label>
+          <label class="choice"><input type="radio" name="budget" value="250k-1m"> <span>$250k–1M</span></label>
+          <label class="choice"><input type="radio" name="budget" value="1m+"> <span>$1M+</span></label>
+        </div>
+      </div>
+
+      <!-- Ajuda -->
+      <div class="group" style="margin-top:10px">
+        <div class="group-title">What can we help with? <span class="hint">Selecione todas que se aplicam</span></div>
+        <div class="stack">
+          <label class="choice"><input type="checkbox" name="help[]" value="annotation"> <span>Data Annotation and Curation for Autonomy</span></label>
+          <label class="choice"><input type="checkbox" name="help[]" value="generation-rlhf"> <span>Data Generation and RLHF for LLMs</span></label>
+          <label class="choice"><input type="checkbox" name="help[]" value="enterprise-genai"> <span>Enterprise: GenAI Solutions and GenAI Platform</span></label>
+          <label class="choice"><input type="checkbox" name="help[]" value="model-test"> <span>Model Test and Evaluation</span></label>
+          <label class="choice"><input type="checkbox" name="help[]" value="public-sector"> <span>Public Sector: Defense, Government, and Non-Profits</span></label>
+          <label class="choice">
+            <input type="checkbox" id="otherCheck" name="help[]" value="other">
+            <span>Other</span>
+          </label>
+          <div class="field" id="otherField" hidden>
+            <label for="otherText">Descreva o “Other”</label>
+            <input id="otherText" class="input" type="text" name="help_other" placeholder="Ex.: Integração específica, consultoria, etc." disabled>
+          </div>
+        </div>
+      </div>
+
+      <!-- Descrição do projeto -->
+      <div class="group" style="margin-top:10px">
+        <div class="group-title">Describe your project*</div>
+        <div class="hint">Inclua volume de dados, prazos, orçamento e escopo</div>
+        <div class="field" style="margin-top:6px">
+          <label class="sr-only" for="details">Detalhes do projeto</label>
+          <textarea id="details" name="details" placeholder="Conte sobre dados, volume, cronograma e resultados esperados" required></textarea>
+        </div>
+      </div>
+
+      <div class="divider" aria-hidden="true"></div>
+
+      <!-- Consentimento -->
+      <label class="consent">
+        <input type="checkbox" id="consent" name="consent" required>
+        <span>Eu concordo em receber comunicações da Guia e entendo que meus dados serão processados conforme a <a href="#" target="_blank" rel="noopener">Política de Privacidade</a>.</span>
+      </label>
+
+      <div class="actions">
+        <button class="btn" type="submit">Submit</button>
+      </div>
+    </form>
+  </div>
+
+  <script>
+    // Toggle do campo "Other"
+    const otherCheck = document.getElementById('otherCheck');
+    const otherField = document.getElementById('otherField');
+    const otherText  = document.getElementById('otherText');
+
+    otherCheck.addEventListener('change', () => {
+      const on = otherCheck.checked;
+      otherField.hidden = !on;
+      otherText.disabled = !on;
+      if(on){ otherText.focus(); } else { otherText.value = ""; }
+    });
+
+    // Validação simples
+    document.querySelector('form').addEventListener('submit', (e) => {
+      const form = e.currentTarget;
+      if(!form.reportValidity()){
+        e.preventDefault();
+      }
+    });
+  </script>
+</body>
+</html>
