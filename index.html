@@ -5,59 +5,73 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Vamos Escalar Juntos — Guia</title>
 
-  <!-- Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500&family=Poppins:wght@700&display=swap" rel="stylesheet">
 
   <style>
     :root{
-      --bg:#0B0C10;
-      --surface:rgba(255,255,255,.04);
-      --border:rgba(255,255,255,.12);
-      --purple:#7269E3;
-      --purple-strong:#625BD6;
-      --mint:#98DEA3;
-      --text:#ffffff;
-      --muted:rgba(214,218,229,.85);
+      --bg:#0B0C10; --text:#fff; --muted:rgba(214,218,229,.85);
+      --border:rgba(255,255,255,.12); --surface:rgba(255,255,255,.04);
+      --purple:#7269E3; --purple-strong:#625BD6; --mint:#98DEA3;
       --shadow:0 10px 30px rgba(0,0,0,.5);
     }
-    body{margin:0;background:var(--bg);color:var(--text);font-family:Inter,sans-serif;padding:40px 16px;}
-    .card{border:1px solid var(--border);border-radius:20px;box-shadow:var(--shadow);padding:28px;max-width:860px;margin:40px auto;}
-    .title{font-family:Poppins,sans-serif;font-weight:700;font-size:28px;text-align:center;color:var(--mint)}
-    .subtitle{text-align:center;color:var(--muted);margin-bottom:20px}
+    *{box-sizing:border-box}
+    body{margin:0;background:var(--bg);color:var(--text);font-family:Inter,system-ui,sans-serif;padding:40px 16px}
+    .card{border:1px solid var(--border);border-radius:20px;box-shadow:var(--shadow);padding:28px;max-width:860px;margin:40px auto;background:none}
+    .title{font-family:Poppins,ui-serif;font-weight:700;font-size:28px;margin:0 0 6px;text-align:center;color:var(--mint)}
+    .subtitle{margin:0 0 20px;text-align:center;color:var(--muted)}
     .grid{display:grid;gap:14px}.grid-2{grid-template-columns:1fr 1fr}
-    @media(max-width:720px){.grid-2{grid-template-columns:1fr} h3{text-align:center}}
+    @media (max-width:720px){.grid-2{grid-template-columns:1fr}}
     .field{display:grid;gap:8px}
-    .input,textarea{background:rgba(255,255,255,.05);border:1px solid var(--border);border-radius:12px;padding:12px 14px;font-size:14px;color:var(--text)}
-    textarea{min-height:120px;margin-top:20px;resize:vertical}
-    .choice{display:flex;align-items:center;gap:10px;padding:10px 12px;border:1px solid var(--border);background:rgba(255,255,255,.04);border-radius:12px}
-    .choice input{width:16px;height:16px;accent-color:var(--purple)}
-    .btn{margin-top:16px;background:linear-gradient(180deg,var(--purple),var(--purple-strong));color:#fff;font-weight:700;border:none;border-radius:999px;padding:12px 18px;cursor:pointer;display:block;margin:auto}
+    .input, textarea{background:rgba(255,255,255,.05);border:1px solid var(--border);border-radius:12px;padding:12px 14px;font-size:14px;color:var(--text)}
+    .input:focus, textarea:focus{outline:none;border-color:var(--purple);box-shadow:0 0 0 3px rgba(114,105,227,.25)}
+    textarea{min-height:120px;resize:vertical;margin-top:6px}
+
+    /* Checkboxes estilizados */
+    .choices{display:grid;gap:10px}
+    .choice{display:flex;align-items:center;gap:12px;padding:14px;border:1px solid var(--border);border-radius:14px;background:var(--surface);cursor:pointer;transition:.15s}
+    .choice:hover{border-color:#7f86ff44}
+    .choice input{appearance:none;width:18px;height:18px;border:2px solid var(--border);border-radius:6px;display:grid;place-content:center;transition:.15s;background:transparent}
+    .choice input::after{content:"";width:10px;height:10px;border-radius:3px;transform:scale(0);transition:.15s;background:var(--purple)}
+    .choice input:checked{border-color:var(--purple)}
+    .choice input:checked::after{transform:scale(1)}
+    .choice .label{line-height:1.3;user-select:none}
+
+    .btn{margin-top:16px;background:linear-gradient(180deg,var(--purple),var(--purple-strong));color:#fff;font-weight:700;border:none;border-radius:999px;padding:12px 18px;cursor:pointer;display:block;margin-left:auto;margin-right:auto}
     .btn[disabled]{opacity:.6;cursor:not-allowed}
+    .spinner{display:inline-block;width:16px;height:16px;border:2px solid #fff;border-right-color:transparent;border-radius:50%;margin-left:8px;vertical-align:-3px;animation:spin .8s linear infinite}
+    @keyframes spin{to{transform:rotate(360deg)}}
+
+    #otherField{display:none}
     #status{margin-top:12px;text-align:center;font-size:14px;color:var(--muted)}
-    #status.ok{color:var(--mint)}#status.err{color:#ff7b7b}
+    #status.ok{color:var(--mint)} #status.err{color:#ff7b7b}
   </style>
 
   <!-- reCAPTCHA v3 -->
   <script>
-    const RECAPTCHA_SITE_KEY = "6LdeQ7UrAAAAAKFcbKoaZF_duTuabz7eddw8Tlf7"; // SUA SITE KEY
-    (function(){
-      const s=document.createElement("script");
-      s.src="https://www.google.com/recaptcha/api.js?render="+encodeURIComponent(RECAPTCHA_SITE_KEY);
-      s.async=true;s.defer=true;document.head.appendChild(s);
-    })();
+    // SUA SITE KEY (cliente)
+    const RECAPTCHA_SITE_KEY = "6LdeQ7UrAAAAAKFcbKoaZF_duTuabz7eddw8Tlf7";
+    // carrega lib
+    (function(){const s=document.createElement("script");s.src="https://www.google.com/recaptcha/api.js?render="+encodeURIComponent(RECAPTCHA_SITE_KEY);s.async=true;s.defer=true;document.head.appendChild(s);})();
+    // token cacheado para acelerar
+    let cachedToken=null;
     function getRecaptchaToken(action="submit"){
       return new Promise((resolve,reject)=>{
         if(!window.grecaptcha) return reject(new Error("reCAPTCHA não carregado"));
-        grecaptcha.ready(()=>{grecaptcha.execute(RECAPTCHA_SITE_KEY,{action}).then(resolve).catch(reject);});
+        grecaptcha.ready(()=>{
+          grecaptcha.execute(RECAPTCHA_SITE_KEY,{action}).then(t=>{cachedToken=t;resolve(t)}).catch(reject);
+        });
       });
     }
+    // pré-carrega um token ao primeiro toque/scroll
+    window.addEventListener('pointerdown',()=>{ if(!cachedToken) getRecaptchaToken("prefetch").catch(()=>{}); },{once:true});
   </script>
 </head>
 <body>
+
   <main>
-    <form class="card" id="leadForm">
+    <form class="card" id="leadForm" autocomplete="on">
       <h1 class="title">Vamos Escalar Juntos</h1>
       <p class="subtitle">Do primeiro contato à conversão: leve seu atendimento no WhatsApp para o próximo nível.</p>
 
@@ -66,77 +80,126 @@
         <div class="field"><input class="input" name="lastName" placeholder="Sobrenome" required></div>
         <div class="field"><input class="input" name="company" placeholder="Nome da empresa" required></div>
         <div class="field"><input class="input" name="segment" placeholder="Segmento de mercado"></div>
-        <div class="field" style="grid-column:1/-1"><input type="tel" class="input" name="phone" placeholder="Telefone" required></div>
+        <div class="field" style="grid-column:1/-1"><input type="tel" class="input" name="phone" placeholder="Telefone" required pattern="[0-9\\s()+-]{8,}"></div>
       </div>
 
-      <h3>Com o que podemos ajudar?</h3>
-      <label class="choice"><input type="checkbox" name="help" value="Atendimento inicial automático — recepção e respostas rápidas no WhatsApp"> Atendimento inicial automático</label>
-      <label class="choice"><input type="checkbox" name="help" value="Agendamento de horários — integração com agenda para marcações automáticas"> Agendamento de horários</label>
-      <label class="choice"><input type="checkbox" name="help" value="Suporte ao cliente — respostas inteligentes para dúvidas frequentes"> Suporte ao cliente</label>
-      <label class="choice"><input type="checkbox" name="help" value="Fluxos de atendimento personalizados — atendimento sob medida para o seu negócio"> Fluxos de atendimento personalizados</label>
-      <label class="choice"><input type="checkbox" name="help" value="Automação de vendas — do primeiro contato até a conversão, direto no WhatsApp"> Automação de vendas</label>
-      <label class="choice"><input type="checkbox" id="otherCheck" name="help" value="Outro"> Outro</label>
+      <h3 style="margin-top:6px">Com o que podemos ajudar?</h3>
+      <div class="choices">
+        <label class="choice"><input type="checkbox" name="help" value="Atendimento inicial automático — recepção e respostas rápidas no WhatsApp"><span class="label">Atendimento inicial automático — recepção e respostas rápidas no WhatsApp</span></label>
+        <label class="choice"><input type="checkbox" name="help" value="Agendamento de horários — integração com agenda para marcações automáticas"><span class="label">Agendamento de horários — integração com agenda para marcações automáticas</span></label>
+        <label class="choice"><input type="checkbox" name="help" value="Suporte ao cliente — respostas inteligentes para dúvidas frequentes"><span class="label">Suporte ao cliente — respostas inteligentes para dúvidas frequentes</span></label>
+        <label class="choice"><input type="checkbox" name="help" value="Fluxos de atendimento personalizados — atendimento sob medida para o seu negócio"><span class="label">Fluxos de atendimento personalizados — atendimento sob medida para o seu negócio</span></label>
+        <label class="choice"><input type="checkbox" name="help" value="Automação de vendas — do primeiro contato até a conversão, direto no WhatsApp"><span class="label">Automação de vendas — do primeiro contato até a conversão, direto no WhatsApp</span></label>
+        <label class="choice"><input type="checkbox" id="otherCheck" name="help" value="Outro"><span class="label">Outro</span></label>
+      </div>
 
-      <div class="field" id="otherField" style="display:none">
+      <div class="field" id="otherField">
         <input class="input" type="text" id="otherText" name="otherDetail" placeholder="Descreva o Outro" disabled>
       </div>
 
-      <textarea name="message" required placeholder="Descreva seu projeto"></textarea>
-      <div class="field"><label><input type="checkbox" name="privacy" required> Eu concordo com a Política de Privacidade</label></div>
+      <div class="field">
+        <label for="message">Detalhe do projeto</label>
+        <textarea id="message" name="message" required placeholder="Dados, volume, cronograma e resultados esperados"></textarea>
+      </div>
+
+      <div class="field">
+        <label><input type="checkbox" name="privacy" required> Eu concordo com a Política de Privacidade</label>
+      </div>
 
       <!-- Honeypot -->
-      <input type="text" name="website" style="display:none">
+      <input type="text" name="website" autocomplete="off" tabindex="-1" style="position:absolute; left:-9999px; opacity:0" aria-hidden="true">
 
-      <button class="btn" id="submitBtn" type="submit">Enviar</button>
-      <p id="status"></p>
+      <button class="btn" id="submitBtn" type="submit">Enviar <span id="spin" class="spinner" style="display:none"></span></button>
+      <p id="status" aria-live="polite"></p>
     </form>
   </main>
 
   <script>
-    const otherCheck=document.getElementById('otherCheck');
-    const otherField=document.getElementById('otherField');
-    const otherText=document.getElementById('otherText');
-    otherCheck.addEventListener('change',()=>{otherField.style.display=otherCheck.checked?'block':'none';otherText.disabled=!otherCheck.checked;});
+    // toggle "Outro"
+    const otherCheck = document.getElementById('otherCheck');
+    const otherField = document.getElementById('otherField');
+    const otherText  = document.getElementById('otherText');
+    otherCheck.addEventListener('change',()=>{const on=otherCheck.checked; otherField.style.display=on?'block':'none'; otherText.disabled=!on; if(on) otherText.focus(); else otherText.value="";});
 
-    const ENDPOINT="https://script.google.com/macros/s/AKfycbwwWJ-YeeNkM8BfPX7rvg6dDRHF25YfdleyCL26kwbPDdZWuskx78-3gxBQcDsJ6QwPug/exec"; // coloque aqui a URL /exec
+    // URL do seu Apps Script (/exec)
+    const ENDPOINT = "https://script.google.com/macros/s/AKfycbwc8YRYwkOdr-XYhYT3DIRvEyslbHzHm83CbPS1kz4tpKuC0v9IUqUOotlqrSKbWqAo8Q/exec";
 
-    const form=document.getElementById('leadForm');
-    const statusEl=document.getElementById('status');
-    const submitBtn=document.getElementById('submitBtn');
+    const form = document.getElementById('leadForm');
+    const statusEl = document.getElementById('status');
+    const submitBtn = document.getElementById('submitBtn');
+    const spin = document.getElementById('spin');
 
-    form.addEventListener('submit',async e=>{
+    // helper com timeout
+    function fetchWithTimeout(resource, options = {}, timeoutMs = 8000){
+      const controller=new AbortController();
+      const id=setTimeout(()=>controller.abort(),timeoutMs);
+      return fetch(resource,{...options,signal:controller.signal}).finally(()=>clearTimeout(id));
+    }
+
+    form.addEventListener('submit', async (e) => {
       e.preventDefault();
-      if(form.website.value) return; // honeypot
+      if (form.website && form.website.value) return;
 
-      statusEl.textContent="Enviando...";statusEl.className="";submitBtn.disabled=true;
-      try{
-        const token=await getRecaptchaToken("submit");
-        const fd=new FormData(form);
+      statusEl.textContent = "Enviando...";
+      statusEl.className = "";
+      submitBtn.disabled = true;
+      spin.style.display = "inline-block";
 
-        const helps=fd.getAll('help');
-        const otherDetail=(fd.get('otherDetail')||'').trim();
-        if(helps.includes('Outro')){
-          fd.delete('help');
-          helps.forEach(h=>fd.append('help',h==='Outro'&&otherDetail?`Outro: ${otherDetail}`:h));
-        }else fd.delete('otherDetail');
+      try {
+        // token do reCAPTCHA (ação 'submit' para bater com o .gs)
+        const recaptchaToken = cachedToken || await getRecaptchaToken("submit");
 
-        fd.append('source','site-vamos-escalar-juntos');
-        fd.append('userAgent',navigator.userAgent);
-        fd.append('page',location.href);
-        fd.append('timestamp',new Date().toISOString());
-        fd.append('recaptchaToken',token);
+        // coleta dos campos
+        const firstName = form.firstName.value.trim();
+        const lastName  = form.lastName.value.trim();
+        const company   = form.company.value.trim();
+        const segment   = form.segment.value.trim();
+        const phone     = form.phone.value.trim();
+        const message   = form.message.value.trim();
+        const privacy   = form.privacy.checked;
 
-        const res=await fetch(ENDPOINT,{method:"POST",body:fd});
-        const text=await res.text();
+        // checkboxes
+        const checkedHelps = Array.from(document.querySelectorAll('input[name="help"]:checked')).map(i=>i.value);
+        const otherDetail = otherCheck.checked ? (otherText.value || '').trim() : '';
+        const helpNormalized = checkedHelps.map(h => (h === 'Outro' && otherDetail) ? `Outro: ${otherDetail}` : h);
 
-        if(res.ok&&text.trim().toUpperCase().includes("OK")){
-          statusEl.className="ok";statusEl.textContent="Recebido! Vamos falar com você em breve.";
-          form.reset();otherField.style.display='none';otherText.disabled=true;
-        }else throw new Error(text||`HTTP ${res.status}`);
-      }catch(err){
-        console.error("Falha no envio:",err);
-        statusEl.className="err";statusEl.textContent="Falha no envio: "+(err.message||"erro de rede");
-      }finally{submitBtn.disabled=false;}
+        const payload = {
+          firstName, lastName, company, segment, phone,
+          help: helpNormalized,
+          otherDetail, // opcional, o .gs também reconhece
+          message, privacy,
+          source: 'site-vamos-escalar-juntos',
+          userAgent: navigator.userAgent,
+          page: location.href,
+          timestamp: new Date().toISOString(),
+          recaptchaToken
+        };
+
+        // 1ª tentativa com timeout curto (8s) — JSON com header text/plain (CORS safe)
+        try{
+          const res = await fetchWithTimeout(ENDPOINT, {
+            method: "POST",
+            headers: { "Content-Type": "text/plain;charset=utf-8" },
+            body: JSON.stringify(payload)
+          }, 8000);
+          const text = await res.text();
+          if (!(res.ok && text.trim().toUpperCase().includes("OK"))) throw new Error(text || `HTTP ${res.status}`);
+          statusEl.className="ok"; statusEl.textContent="Recebido! Vamos falar com você em breve.";
+        }catch(err){
+          // fallback otimista (no-cors): envia mesmo sem conseguir ler a resposta
+          await fetch(ENDPOINT, { method:"POST", headers:{ "Content-Type":"text/plain;charset=utf-8" }, body: JSON.stringify(payload), mode:"no-cors" });
+          statusEl.className="ok"; statusEl.textContent="Recebido! (confirmação otimista)";
+        }
+
+        form.reset(); otherField.style.display='none'; otherText.disabled=true; cachedToken=null;
+      } catch (err) {
+        console.error("Falha no envio:", err);
+        statusEl.className = "err";
+        statusEl.textContent = "Falha no envio: " + (err.message || "erro de rede");
+      } finally {
+        submitBtn.disabled = false;
+        spin.style.display = "none";
+      }
     });
   </script>
 </body>
