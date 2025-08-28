@@ -1,59 +1,258 @@
-// injeta o header e ativa o dropdown (mobile e desktop)
-fetch('header.html')
-  .then(r => r.text())
-  .then(html => {
-    const mount = document.getElementById('site-header');
-    if (!mount) { console.error('Elemento #site-header não encontrado.'); return; }
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Guia — Vamos Escalar Juntos</title>
 
-    mount.innerHTML = html;
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500&family=Poppins:wght@700;800&display=swap" rel="stylesheet">
 
-    const btn = mount.querySelector('.menu-toggle');
-    const nav = mount.querySelector('#site-menu');
-    if (!btn || !nav) { console.error('menu-toggle ou #site-menu não encontrados dentro do header.'); return; }
+  <meta name="theme-color" content="#0B0C10">
 
-    const mqMobile = window.matchMedia('(max-width: 860px)');
+  <style>
+    /* ================== Tokens base ================== */
+    :root{
+      --bg:#0B0C10; --text:#ffffff; --muted:rgba(214,218,229,.85);
+      --surface:rgba(255,255,255,.04); --border:rgba(255,255,255,.12);
+      --purple:#7269E3; --purple-strong:#625BD6; --mint:#98DEA3; --mauve:#A783A6;
+      --shadow:0 10px 30px rgba(0,0,0,.35);
+      --header-h:64px;
+      --font-heading:'Poppins', system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+      --font-body:'Inter', ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+    }
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{
+      margin:0; background:var(--bg); color:var(--text);
+      font:400 16px/1.6 var(--font-body);
+      -webkit-font-smoothing:antialiased; text-rendering:optimizeLegibility;
+      padding-top:calc(var(--header-h) - 10px);
+    }
+    a{color:inherit; text-decoration:none}
+    img{max-width:100%; height:auto; display:block}
+    .container{width:100%; max-width:1120px; margin:0 auto; padding:0 20px}
 
-    const lockScroll = (on) => {
-      const shouldLock = on && mqMobile.matches;
-      document.documentElement.classList.toggle('no-scroll', shouldLock);
-      document.body.classList.toggle('no-scroll', shouldLock);
-    };
+    /* ================== HEADER (logo central) ================== */
+    .site-header{
+      position:fixed; inset:0 0 auto 0; z-index:1000;
+      background:rgba(11,12,16,.6);
+      backdrop-filter:saturate(140%) blur(8px);
+      -webkit-backdrop-filter:saturate(140%) blur(8px);
+    }
+    .nav{display:grid; grid-template-columns:1fr auto 1fr; align-items:center; min-height:var(--header-h)}
+    .brand{grid-column:2; justify-self:center; display:inline-flex; align-items:center}
+    .brand img{height:28px; width:auto}
 
-    function applyState(isOpen) {
-      // Ícone (3 barras ↔ X)
-      btn.classList.toggle('is-open', isOpen);
-      btn.setAttribute('aria-expanded', String(isOpen));
-      btn.setAttribute('aria-label', isOpen ? 'Fechar menu' : 'Abrir menu');
+    /* ================== CARTÃO/FORM ================== */
+    .card{
+      border:1px solid var(--border);
+      border-radius:20px;
+      box-shadow:var(--shadow);
+      padding:28px;
+      max-width:860px;
+      margin:40px auto;
+      background:none;
+    }
+    .title{font-family:var(--font-heading); font-weight:800; font-size:28px; margin:0 0 6px; text-align:center; color:var(--mint)}
+    .subtitle{margin:0 0 20px; text-align:center; color:var(--muted)}
+    .grid{display:grid; gap:14px}
+    .grid-2{grid-template-columns:1fr 1fr}
+    @media(max-width:720px){.grid-2{grid-template-columns:1fr}}
+    .field{display:grid; gap:8px}
+    .input, textarea{
+      background:rgba(255,255,255,.05); border:1px solid var(--border);
+      border-radius:12px; padding:12px 14px; font-size:14px; color:var(--text)
+    }
+    .input:focus, textarea:focus{outline:none; border-color:var(--purple); box-shadow:0 0 0 3px rgba(114,105,227,.25)}
+    textarea{min-height:120px; resize:vertical; margin-top:6px}
 
-      // Mostrar/ocultar menu
-      nav.classList.toggle('open', isOpen);
+    /* Checkboxes estilizados */
+    .choices{display:grid; gap:10px}
+    .choice{display:flex; align-items:center; gap:12px; padding:14px; border:1px solid var(--border); border-radius:14px; background:var(--surface); cursor:pointer; transition:.15s}
+    .choice:hover{border-color:#7f86ff44}
+    .choice input{appearance:none; width:18px; height:18px; border:2px solid var(--border); border-radius:6px; display:grid; place-content:center; transition:.15s; background:transparent}
+    .choice input::after{content:""; width:10px; height:10px; border-radius:3px; transform:scale(0); transition:.15s; background:var(--purple)}
+    .choice input:checked{border-color:var(--purple)}
+    .choice input:checked::after{transform:scale(1)}
+    .choice .label{line-height:1.3; user-select:none}
 
-      // [hidden] só no mobile
-      nav.hidden = mqMobile.matches ? !isOpen : false;
+    /* Botão */
+    .btn{margin-top:16px; background:linear-gradient(180deg,var(--purple),var(--purple-strong)); color:#fff; font-weight:700; border:none; border-radius:999px; padding:12px 18px; cursor:pointer; display:block; margin-left:auto; margin-right:auto}
+    .btn[disabled]{opacity:.6; cursor:not-allowed}
+    .spinner{display:inline-block; width:16px; height:16px; border:2px solid #fff; border-right-color:transparent; border-radius:50%; margin-left:8px; vertical-align:-3px; animation:spin .8s linear infinite}
+    @keyframes spin{to{transform:rotate(360deg)}}
+    #status{margin-top:12px; text-align:center; font-size:14px; color:var(--muted)}
+    #status.ok{color:var(--mint)} #status.err{color:#ff7b7b}
+    #otherField{display:none}
 
-      lockScroll(isOpen);
+    /* ================== FOOTER ================== */
+    .footer{padding:32px 0; background:transparent; color:var(--mauve)}
+    .footer-content{display:flex; justify-content:space-between; align-items:center; gap:12px; flex-wrap:wrap}
+    .footer-links{display:flex; gap:12px}
+    .footer-links a{color:var(--text); transition:color .3s ease}
+    .footer-links a:hover{color:var(--purple)}
+    @media (max-width:640px){
+      .footer-content{flex-direction:column; align-items:center; text-align:center; gap:8px}
+      .footer-links{justify-content:center; flex-wrap:wrap}
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ============ HEADER (logo centralizado) ============ -->
+  <header class="site-header" aria-label="Cabeçalho da Guia (Agência)">
+    <div class="container nav">
+      <a href="#" class="brand" aria-label="Página inicial da Guia">
+        <!-- Troque LOGO.svg pelo seu arquivo -->
+        <img src="LOGO.svg" alt="Logo Guia" decoding="async" loading="eager" />
+      </a>
+    </div>
+  </header>
+
+  <!-- ============ FORMULÁRIO ============ -->
+  <main>
+    <form class="card" id="leadForm" autocomplete="on">
+      <h1 class="title">Vamos Escalar Juntos</h1>
+      <p class="subtitle">Do primeiro contato à conversão: leve seu atendimento no WhatsApp para o próximo nível.</p>
+
+      <div class="grid grid-2">
+        <div class="field"><input class="input" name="firstName" placeholder="Nome" required></div>
+        <div class="field"><input class="input" name="lastName" placeholder="Sobrenome" required></div>
+        <div class="field"><input class="input" name="company" placeholder="Nome da empresa" required></div>
+        <div class="field"><input class="input" name="segment" placeholder="Segmento de mercado"></div>
+        <div class="field" style="grid-column:1/-1"><input type="tel" class="input" name="phone" placeholder="Telefone" required pattern="[0-9\\s()+-]{8,}"></div>
+      </div>
+
+      <h3 style="margin-top:6px">Com o que podemos ajudar?</h3>
+      <div class="choices">
+        <label class="choice"><input type="checkbox" name="help" value="Atendimento inicial automático — recepção e respostas rápidas no WhatsApp"><span class="label">Atendimento inicial automático — recepção e respostas rápidas no WhatsApp</span></label>
+        <label class="choice"><input type="checkbox" name="help" value="Agendamento de horários — integração com agenda para marcações automáticas"><span class="label">Agendamento de horários — integração com agenda para marcações automáticas</span></label>
+        <label class="choice"><input type="checkbox" name="help" value="Suporte ao cliente — respostas inteligentes para dúvidas frequentes"><span class="label">Suporte ao cliente — respostas inteligentes para dúvidas frequentes</span></label>
+        <label class="choice"><input type="checkbox" name="help" value="Fluxos de atendimento personalizados — atendimento sob medida para o seu negócio"><span class="label">Fluxos de atendimento personalizados — atendimento sob medida para o seu negócio</span></label>
+        <label class="choice"><input type="checkbox" name="help" value="Automação de vendas — do primeiro contato até a conversão, direto no WhatsApp"><span class="label">Automação de vendas — do primeiro contato até a conversão, direto no WhatsApp</span></label>
+        <label class="choice"><input type="checkbox" id="otherCheck" name="help" value="Outro"><span class="label">Outro</span></label>
+      </div>
+
+      <div class="field" id="otherField">
+        <input class="input" type="text" id="otherText" name="otherDetail" placeholder="Descreva o Outro" disabled>
+      </div>
+
+      <div class="field">
+        <label for="message">Detalhe do projeto</label>
+        <textarea id="message" name="message" required placeholder="Dados, volume, cronograma e resultados esperados"></textarea>
+      </div>
+
+      <div class="field">
+        <label><input type="checkbox" name="privacy" required> Eu concordo com a Política de Privacidade</label>
+      </div>
+
+      <!-- Honeypot -->
+      <input type="text" name="website" autocomplete="off" tabindex="-1" style="position:absolute; left:-9999px; opacity:0" aria-hidden="true">
+
+      <button class="btn" id="submitBtn" type="submit">Enviar <span id="spin" class="spinner" style="display:none"></span></button>
+      <p id="status" aria-live="polite"></p>
+    </form>
+  </main>
+
+  <!-- ============ FOOTER ============ -->
+  <footer class="footer">
+    <div class="container footer-content">
+      <small class="muted">© <span id="footer-year"></span> Guia — Todos os direitos reservados</small>
+      <div class="footer-links">
+        <a class="tag" href="https://www.instagram.com" target="_blank" rel="noopener" aria-label="Instagram">Instagram</a>
+        <a class="tag" href="https://wa.me/5511999999999" target="_blank" rel="noopener" aria-label="WhatsApp">WhatsApp</a>
+        <a class="tag" href="https://www.linkedin.com" target="_blank" rel="noopener" aria-label="LinkedIn">LinkedIn</a>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    // Ano do footer
+    document.getElementById('footer-year').textContent = new Date().getFullYear();
+
+    // "Outro" on/off
+    const otherCheck = document.getElementById('otherCheck');
+    const otherField = document.getElementById('otherField');
+    const otherText  = document.getElementById('otherText');
+    otherCheck.addEventListener('change',()=>{
+      const on = otherCheck.checked;
+      otherField.style.display = on ? 'block' : 'none';
+      otherText.disabled = !on;
+      if(on) otherText.focus(); else otherText.value="";
+    });
+
+    // ====== ENVIO ======
+    const ENDPOINT = "https://script.google.com/macros/s/AKfycbxmyRoQId4APU70xoGB-3E9A1jaYhbJGGS7-JVy_9yCdsC3cgKECgh09w17ZTHEN9HMCg/exec"; /* sua URL /exec */
+    const form = document.getElementById('leadForm');
+    const statusEl = document.getElementById('status');
+    const submitBtn = document.getElementById('submitBtn');
+    const spin = document.getElementById('spin');
+
+    function fetchWithTimeout(resource, options = {}, timeoutMs = 8000){
+      const controller=new AbortController();
+      const id=setTimeout(()=>controller.abort(),timeoutMs);
+      return fetch(resource,{...options,signal:controller.signal}).finally(()=>clearTimeout(id));
     }
 
-    const toggleMenu = () => applyState(!btn.classList.contains('is-open'));
-    const closeMenu  = () => applyState(false);
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      if (form.website && form.website.value) return;
 
-    // eventos
-    btn.addEventListener('click', toggleMenu);
-    nav.addEventListener('click', (e) => { if (e.target.closest('a')) closeMenu(); });
-    mount.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeMenu(); });
-    document.addEventListener('click', (e) => {
-      const inside = e.target.closest('#site-menu, .menu-toggle');
-      if (!inside && btn.classList.contains('is-open')) closeMenu();
+      statusEl.textContent = "Enviando...";
+      statusEl.className = "";
+      submitBtn.disabled = true;
+      spin.style.display = "inline-block";
+
+      try {
+        const payload = {
+          firstName: form.firstName.value.trim(),
+          lastName : form.lastName.value.trim(),
+          company  : form.company.value.trim(),
+          segment  : form.segment.value.trim(),
+          phone    : form.phone.value.trim(),
+          // checkboxes
+          help: Array.from(document.querySelectorAll('input[name="help"]:checked')).map(i=>{
+            if (i.value === 'Outro') {
+              const extra = (otherText.value||'').trim();
+              return extra ? `Outro: ${extra}` : 'Outro';
+            }
+            return i.value;
+          }),
+          otherDetail: otherCheck.checked ? (otherText.value || '').trim() : '',
+          message : form.message.value.trim(),
+          privacy : form.privacy.checked,
+          source  : 'site-vamos-escalar-juntos',
+          userAgent: navigator.userAgent,
+          page    : location.href,
+          timestamp: new Date().toISOString()
+        };
+
+        const res = await fetchWithTimeout(ENDPOINT, {
+          method: "POST",
+          headers: { "Content-Type": "text/plain;charset=utf-8" }, // JSON sem preflight
+          body: JSON.stringify(payload)
+        }, 8000);
+
+        const text = await res.text();
+        if (res.ok && text.trim().toUpperCase().includes("OK")){
+          statusEl.className="ok";
+          statusEl.textContent="Recebido! Vamos falar com você em breve.";
+          form.reset(); otherField.style.display='none'; otherText.disabled=true;
+        } else {
+          throw new Error(text || `HTTP ${res.status}`);
+        }
+      } catch (err) {
+        console.error("Falha no envio:", err);
+        statusEl.className = "err";
+        statusEl.textContent = "Falha no envio: " + (err.message || "erro de rede");
+      } finally {
+        submitBtn.disabled = false;
+        spin.style.display = "none";
+      }
     });
-
-    // Reavaliar no resize
-    mqMobile.addEventListener('change', () => {
-      if (!mqMobile.matches) nav.hidden = false;
-      lockScroll(btn.classList.contains('is-open'));
-    });
-
-    // Estado inicial
-    applyState(false);
-    if (!mqMobile.matches) nav.hidden = false;
-  })
-  .catch(err => console.error('Falha ao carregar header.html:', err));
+  </script>
+</body>
+</html>
