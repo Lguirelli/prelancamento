@@ -13,7 +13,6 @@
   <meta name="theme-color" content="#0B0C10">
 
   <style>
-    /* ================== Tokens base ================== */
     :root{
       --bg:#0B0C10; --text:#ffffff; --muted:rgba(214,218,229,.85);
       --surface:rgba(255,255,255,.04); --border:rgba(255,255,255,.12);
@@ -35,7 +34,7 @@
     img{max-width:100%; height:auto; display:block}
     .container{width:100%; max-width:1120px; margin:0 auto; padding:0 20px}
 
-    /* ================== HEADER (logo central) ================== */
+    /* HEADER */
     .site-header{
       position:fixed; inset:0 0 auto 0; z-index:1000;
       background:rgba(11,12,16,.6);
@@ -46,7 +45,7 @@
     .brand{grid-column:2; justify-self:center; display:inline-flex; align-items:center}
     .brand img{height:28px; width:auto}
 
-    /* ================== CARTÃO/FORM ================== */
+    /* CARD/FORM */
     .card{
       border:1px solid var(--border);
       border-radius:20px;
@@ -69,7 +68,7 @@
     .input:focus, textarea:focus{outline:none; border-color:var(--purple); box-shadow:0 0 0 3px rgba(114,105,227,.25)}
     textarea{min-height:120px; resize:vertical; margin-top:6px}
 
-    /* Checkboxes estilizados */
+    /* Checkboxes */
     .choices{display:grid; gap:10px}
     .choice{display:flex; align-items:center; gap:12px; padding:14px; border:1px solid var(--border); border-radius:14px; background:var(--surface); cursor:pointer; transition:.15s}
     .choice:hover{border-color:#7f86ff44}
@@ -88,7 +87,7 @@
     #status.ok{color:var(--mint)} #status.err{color:#ff7b7b}
     #otherField{display:none}
 
-    /* ================== FOOTER ================== */
+    /* FOOTER */
     .footer{padding:32px 0; background:transparent; color:var(--mauve)}
     .footer-content{display:flex; justify-content:space-between; align-items:center; gap:12px; flex-wrap:wrap}
     .footer-links{display:flex; gap:12px}
@@ -102,19 +101,18 @@
 </head>
 <body>
 
-  <!-- ============ HEADER (logo centralizado) ============ -->
+  <!-- HEADER -->
   <header class="site-header" aria-label="Cabeçalho da Guia (Agência)">
     <div class="container nav">
       <a href="#" class="brand" aria-label="Página inicial da Guia">
-        <!-- Troque LOGO.svg pelo seu arquivo -->
         <img src="LOGO.svg" alt="Logo Guia" decoding="async" loading="eager" />
       </a>
     </div>
   </header>
 
-  <!-- ============ FORMULÁRIO ============ -->
+  <!-- FORM -->
   <main>
-    <form class="card" id="leadForm" autocomplete="on">
+    <form class="card" id="leadForm" autocomplete="on" novalidate>
       <h1 class="title">Vamos Escalar Juntos</h1>
       <p class="subtitle">Do primeiro contato à conversão: leve seu atendimento no WhatsApp para o próximo nível.</p>
 
@@ -123,7 +121,7 @@
         <div class="field"><input class="input" name="lastName" placeholder="Sobrenome" required></div>
         <div class="field"><input class="input" name="company" placeholder="Nome da empresa" required></div>
         <div class="field"><input class="input" name="segment" placeholder="Segmento de mercado"></div>
-        <div class="field" style="grid-column:1/-1"><input type="tel" class="input" name="phone" placeholder="Telefone" required pattern="[0-9\\s()+-]{8,}"></div>
+        <div class="field" style="grid-column:1/-1"><input type="tel" class="input" name="phone" placeholder="Telefone" required pattern="[0-9\s()+-]{8,}"></div>
       </div>
 
       <h3 style="margin-top:6px">Com o que podemos ajudar?</h3>
@@ -157,7 +155,7 @@
     </form>
   </main>
 
-  <!-- ============ FOOTER ============ -->
+  <!-- FOOTER -->
   <footer class="footer">
     <div class="container footer-content">
       <small class="muted">© <span id="footer-year"></span> Guia — Todos os direitos reservados</small>
@@ -185,13 +183,14 @@
     });
 
     // ====== ENVIO ======
-    const ENDPOINT = "https://script.google.com/macros/s/AKfycbxmyRoQId4APU70xoGB-3E9A1jaYhbJGGS7-JVy_9yCdsC3cgKECgh09w17ZTHEN9HMCg/exec"; /* sua URL /exec */
+    const ENDPOINT = "https://script.google.com/macros/s/AKfycbz3m4SLtIRW_aDKL1-zbpEWBBCPqSy8WREUuM5D1up_qoGZ0U2DxhvA_UgSuWqYh1GrcQ/exec"; /* sua URL /exec */
     const form = document.getElementById('leadForm');
     const statusEl = document.getElementById('status');
     const submitBtn = document.getElementById('submitBtn');
     const spin = document.getElementById('spin');
 
-    function fetchWithTimeout(resource, options = {}, timeoutMs = 8000){
+    // fetch com timeout
+    function fetchWithTimeout(resource, options = {}, timeoutMs = 12000){
       const controller=new AbortController();
       const id=setTimeout(()=>controller.abort(),timeoutMs);
       return fetch(resource,{...options,signal:controller.signal}).finally(()=>clearTimeout(id));
@@ -199,7 +198,10 @@
 
     form.addEventListener('submit', async (e) => {
       e.preventDefault();
-      if (form.website && form.website.value) return;
+      if (form.website && form.website.value) return; // honeypot
+
+      // HTML5 validation visual
+      if (!form.checkValidity()) { form.reportValidity(); return; }
 
       statusEl.textContent = "Enviando...";
       statusEl.className = "";
@@ -207,43 +209,41 @@
       spin.style.display = "inline-block";
 
       try {
-        const payload = {
-          firstName: form.firstName.value.trim(),
-          lastName : form.lastName.value.trim(),
-          company  : form.company.value.trim(),
-          segment  : form.segment.value.trim(),
-          phone    : form.phone.value.trim(),
-          // checkboxes
-          help: Array.from(document.querySelectorAll('input[name="help"]:checked')).map(i=>{
-            if (i.value === 'Outro') {
-              const extra = (otherText.value||'').trim();
-              return extra ? `Outro: ${extra}` : 'Outro';
-            }
-            return i.value;
-          }),
-          otherDetail: otherCheck.checked ? (otherText.value || '').trim() : '',
-          message : form.message.value.trim(),
-          privacy : form.privacy.checked,
-          source  : 'site-vamos-escalar-juntos',
-          userAgent: navigator.userAgent,
-          page    : location.href,
-          timestamp: new Date().toISOString()
-        };
+        // ----- FormData (sem headers) -----
+        const fd = new FormData(form);
 
-        const res = await fetchWithTimeout(ENDPOINT, {
-          method: "POST",
-          headers: { "Content-Type": "text/plain;charset=utf-8" }, // JSON sem preflight
-          body: JSON.stringify(payload)
-        }, 8000);
-
-        const text = await res.text();
-        if (res.ok && text.trim().toUpperCase().includes("OK")){
-          statusEl.className="ok";
-          statusEl.textContent="Recebido! Vamos falar com você em breve.";
-          form.reset(); otherField.style.display='none'; otherText.disabled=true;
+        // Normaliza "Outro"
+        const helps = fd.getAll('help');
+        const otherDetail = (fd.get('otherDetail') || '').trim();
+        if (helps.includes('Outro')) {
+          fd.delete('help');
+          helps.forEach(h => fd.append('help', h === 'Outro' && otherDetail ? `Outro: ${otherDetail}` : h));
         } else {
-          throw new Error(text || `HTTP ${res.status}`);
+          fd.delete('otherDetail');
         }
+
+        // Metadados
+        fd.append('source','site-vamos-escalar-juntos');
+        fd.append('userAgent', navigator.userAgent);
+        fd.append('page', location.href);
+        fd.append('timestamp', new Date().toISOString());
+
+        // 1ª tentativa (timeout)
+        try{
+          const res = await fetchWithTimeout(ENDPOINT, { method:"POST", body: fd }, 12000);
+          const text = await res.text();
+          if (!(res.ok && String(text).trim().toUpperCase().includes("OK"))) {
+            throw new Error(text || `HTTP ${res.status}`);
+          }
+        }catch(err){
+          // Fallback otimista (no-cors) — evita travar se a resposta não puder ser lida
+          await fetch(ENDPOINT, { method:"POST", body: fd, mode:"no-cors" });
+        }
+
+        statusEl.className = "ok";
+        statusEl.textContent = "Recebido! Vamos falar com você em breve.";
+        form.reset(); otherField.style.display='none'; otherText.disabled=true;
+
       } catch (err) {
         console.error("Falha no envio:", err);
         statusEl.className = "err";
