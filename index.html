@@ -43,7 +43,7 @@
       max-width:860px;
       width:100%;
       background:none;
-      margin:40px auto; /* centralizado e com espaço do cabeçalho */
+      margin:40px auto;
     }
     .title{
       font-family:Poppins, sans-serif;
@@ -51,7 +51,7 @@
       font-size:28px;
       margin:0 0 6px;
       text-align:center;
-      color:var(--mint); /* verde da paleta Guia */
+      color:var(--mint);
     }
     .subtitle{
       margin:0 0 20px;
@@ -79,7 +79,7 @@
     textarea{
       min-height:120px;
       resize:vertical;
-      margin-top:20px; /* espaço extra antes da área de texto */
+      margin-top:20px;
     }
     .input:focus, textarea:focus{
       border-color:var(--purple);
@@ -102,7 +102,11 @@
       margin-left:auto;
       margin-right:auto;
     }
+    .btn[disabled]{opacity:.6; cursor:not-allowed}
     #otherField{margin-top:10px; display:none}
+    #status{margin-top:12px; text-align:center; font-size:14px; color:var(--muted)}
+    #status.ok{color:var(--mint)}
+    #status.err{color:#ff7b7b}
   </style>
 </head>
 <body>
@@ -112,34 +116,62 @@
   <script src="header.js" defer></script>
 
   <main id="conteudo">
-    <form class="card">
+    <!-- IMPORTANTE: adicionamos id e names para serializar corretamente -->
+    <form class="card" id="leadForm">
       <h1 class="title">Vamos Escalar Juntos</h1>
       <p class="subtitle">Do primeiro contato à conversão: leve seu atendimento no WhatsApp para o próximo nível.</p>
 
       <div class="grid grid-2">
-        <div class="field"><input class="input" placeholder="Nome" required></div>
-        <div class="field"><input class="input" placeholder="Sobrenome" required></div>
-        <div class="field"><input class="input" placeholder="Nome da empresa" required></div>
-        <div class="field"><input class="input" placeholder="Segmento de mercado" ></div>
-        <div class="field" style="grid-column:1/-1"><input type="tel" class="input" placeholder="Telefone" required pattern="[0-9\s()+-]{8,}"></div>
+        <div class="field"><input class="input" name="firstName" placeholder="Nome" required></div>
+        <div class="field"><input class="input" name="lastName" placeholder="Sobrenome" required></div>
+        <div class="field"><input class="input" name="company" placeholder="Nome da empresa" required></div>
+        <div class="field"><input class="input" name="segment" placeholder="Segmento de mercado"></div>
+        <div class="field" style="grid-column:1/-1">
+          <input type="tel" class="input" name="phone" placeholder="Telefone" required pattern="[0-9\s()+-]{8,}">
+        </div>
       </div>
 
       <h3>Com o que podemos ajudar?</h3>
-      <label class="choice"><input type="checkbox" name="help"> <span>Atendimento inicial automático — recepção e respostas rápidas no WhatsApp</span></label>
-      <label class="choice"><input type="checkbox" name="help"> <span>Agendamento de horários — integração com agenda para marcações automáticas.</span></label>
-      <label class="choice"><input type="checkbox" name="help"> <span>Suporte ao cliente — respostas inteligentes para dúvidas frequentes.</span></label>
-      <label class="choice"><input type="checkbox" name="help"> <span>Fluxos de atendimento personalizados — atendimento sob medida para o seu negócio.</span></label>
-      <label class="choice"><input type="checkbox" name="help"> <span>Automação de vendas — do primeiro contato até a conversão, direto no WhatsApp.</span></label>
-      <label class="choice"><input type="checkbox" id="otherCheck" name="help" value="other"> <span>Outro</span></label>
+      <label class="choice">
+        <input type="checkbox" name="help" value="Atendimento inicial automático — recepção e respostas rápidas no WhatsApp">
+        <span>Atendimento inicial automático — recepção e respostas rápidas no WhatsApp</span>
+      </label>
+      <label class="choice">
+        <input type="checkbox" name="help" value="Agendamento de horários — integração com agenda para marcações automáticas">
+        <span>Agendamento de horários — integração com agenda para marcações automáticas.</span>
+      </label>
+      <label class="choice">
+        <input type="checkbox" name="help" value="Suporte ao cliente — respostas inteligentes para dúvidas frequentes">
+        <span>Suporte ao cliente — respostas inteligentes para dúvidas frequentes.</span>
+      </label>
+      <label class="choice">
+        <input type="checkbox" name="help" value="Fluxos de atendimento personalizados — atendimento sob medida para o seu negócio">
+        <span>Fluxos de atendimento personalizados — atendimento sob medida para o seu negócio.</span>
+      </label>
+      <label class="choice">
+        <input type="checkbox" name="help" value="Automação de vendas — do primeiro contato até a conversão, direto no WhatsApp">
+        <span>Automação de vendas — do primeiro contato até a conversão, direto no WhatsApp.</span>
+      </label>
+      <label class="choice">
+        <input type="checkbox" id="otherCheck" name="help" value="Outro">
+        <span>Outro</span>
+      </label>
 
       <div class="field" id="otherField">
-        <input class="input" type="text" id="otherText" placeholder="Descreva o Outro">
+        <input class="input" type="text" id="otherText" name="otherDetail" placeholder="Descreva o Outro">
       </div>
 
-      <textarea required placeholder="Descreva seu projeto: dados, volume, cronograma e resultados esperados"></textarea>
+      <textarea name="message" required placeholder="Descreva seu projeto: dados, volume, cronograma e resultados esperados"></textarea>
 
-      <div class="field"><label><input type="checkbox" required> Eu concordo com a Política de Privacidade</label></div>
-      <button class="btn">Enviar</button>
+      <div class="field">
+        <label><input type="checkbox" name="privacy" required> Eu concordo com a Política de Privacidade</label>
+      </div>
+
+      <!-- honeypot simples para bots -->
+      <input type="text" name="website" autocomplete="off" tabindex="-1" style="position:absolute; left:-9999px; opacity:0" aria-hidden="true">
+
+      <button class="btn" id="submitBtn" type="submit">Enviar</button>
+      <p id="status" aria-live="polite"></p>
     </form>
   </main>
 
@@ -148,22 +180,88 @@
   <script src="footer.js" defer></script>
 
   <script>
-    const otherCheck=document.getElementById('otherCheck');
-    const otherField=document.getElementById('otherField');
-    const otherText=document.getElementById('otherText');
+    // ---- mostrar/ocultar campo "Outro" ----
+    const otherCheck = document.getElementById('otherCheck');
+    const otherField = document.getElementById('otherField');
+    const otherText  = document.getElementById('otherText');
 
     otherField.style.display = 'none';
     otherText.disabled = true;
 
-    otherCheck.addEventListener('change',()=>{
-      if(otherCheck.checked){
-        otherField.style.display = 'block';
-        otherText.disabled = false;
-        otherText.focus();
-      }else{
+    otherCheck.addEventListener('change', () => {
+      const on = otherCheck.checked;
+      otherField.style.display = on ? 'block' : 'none';
+      otherText.disabled = !on;
+      if(on) otherText.focus(); else otherText.value = "";
+    });
+
+    // ---- envio ao Google Apps Script (JSON) ----
+    const ENDPOINT = "https://script.google.com/macros/s/AKfycbw-SjEti8YbDE9vFvHalcKGdD4wnbpsGNfOQ5McwmTjwHHDYOtGFJSTeFXmj9r7Nz5IGw/exec";
+
+    const form = document.getElementById('leadForm');
+    const statusEl = document.getElementById('status');
+    const submitBtn = document.getElementById('submitBtn');
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+
+      // Honeypot: se preenchido, cancela
+      if(form.website && form.website.value) {
+        return; // silêncio para bots
+      }
+
+      // Coletar dados
+      const fd = new FormData(form);
+      const helps = fd.getAll('help'); // todas as checkboxes marcadas
+
+      // Anexa detalhe de "Outro" quando marcado
+      const otherDetail = (fd.get('otherDetail') || '').trim();
+      const helpWithOther = helps.includes('Outro') && otherDetail
+        ? helps.map(h => h === 'Outro' ? `Outro: ${otherDetail}` : h)
+        : helps.filter(h => h !== 'Outro'); // remove "Outro" puro se sem detalhe
+
+      const payload = {
+        firstName: (fd.get('firstName') || '').trim(),
+        lastName:  (fd.get('lastName')  || '').trim(),
+        company:   (fd.get('company')   || '').trim(),
+        segment:   (fd.get('segment')   || '').trim(),
+        phone:     (fd.get('phone')     || '').trim(),
+        help:      helpWithOther,
+        message:   (fd.get('message')   || '').trim(),
+        privacy:   !!fd.get('privacy'),
+        source:    "site-vamos-escalar-juntos",
+        userAgent: navigator.userAgent,
+        page:      location.href,
+        timestamp: new Date().toISOString()
+      };
+
+      // UX feedback
+      statusEl.className = "";
+      statusEl.textContent = "Enviando...";
+      submitBtn.disabled = true;
+
+      try {
+        const res = await fetch(ENDPOINT, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload)
+        });
+
+        // Alguns Apps Script retornam 200 com texto simples
+        const text = await res.text();
+        if(!res.ok) throw new Error(text || `HTTP ${res.status}`);
+
+        statusEl.className = "ok";
+        statusEl.textContent = "Recebido! Vamos falar com você em breve.";
+        form.reset();
         otherField.style.display = 'none';
         otherText.disabled = true;
-        otherText.value="";
+      } catch(err) {
+        console.error(err);
+        statusEl.className = "err";
+        statusEl.textContent = "Não foi possível enviar agora. Tente novamente em instantes.";
+      } finally {
+        submitBtn.disabled = false;
       }
     });
   </script>
