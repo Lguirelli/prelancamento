@@ -116,7 +116,6 @@
   <script src="header.js" defer></script>
 
   <main id="conteudo">
-    <!-- IMPORTANTE: adicionamos id e names para serializar corretamente -->
     <form class="card" id="leadForm">
       <h1 class="title">Vamos Escalar Juntos</h1>
       <p class="subtitle">Do primeiro contato à conversão: leve seu atendimento no WhatsApp para o próximo nível.</p>
@@ -127,7 +126,7 @@
         <div class="field"><input class="input" name="company" placeholder="Nome da empresa" required></div>
         <div class="field"><input class="input" name="segment" placeholder="Segmento de mercado"></div>
         <div class="field" style="grid-column:1/-1">
-          <input type="tel" class="input" name="phone" placeholder="Telefone" required pattern="[0-9\s()+-]{8,}">
+          <input type="tel" class="input" name="phone" placeholder="Telefone" required pattern="[0-9\\s()+-]{8,}">
         </div>
       </div>
 
@@ -167,7 +166,7 @@
         <label><input type="checkbox" name="privacy" required> Eu concordo com a Política de Privacidade</label>
       </div>
 
-      <!-- honeypot simples para bots -->
+      <!-- honeypot -->
       <input type="text" name="website" autocomplete="off" tabindex="-1" style="position:absolute; left:-9999px; opacity:0" aria-hidden="true">
 
       <button class="btn" id="submitBtn" type="submit">Enviar</button>
@@ -180,14 +179,12 @@
   <script src="footer.js" defer></script>
 
   <script>
-    // ---- mostrar/ocultar campo "Outro" ----
+    // Mostrar/ocultar "Outro"
     const otherCheck = document.getElementById('otherCheck');
     const otherField = document.getElementById('otherField');
     const otherText  = document.getElementById('otherText');
-
     otherField.style.display = 'none';
     otherText.disabled = true;
-
     otherCheck.addEventListener('change', () => {
       const on = otherCheck.checked;
       otherField.style.display = on ? 'block' : 'none';
@@ -195,7 +192,7 @@
       if(on) otherText.focus(); else otherText.value = "";
     });
 
-    // ---- envio ao Google Apps Script (JSON) ----
+    // URL do Web App (troque após reimplantar, se precisar)
     const ENDPOINT = "https://script.google.com/macros/s/AKfycbw-SjEti8YbDE9vFvHalcKGdD4wnbpsGNfOQ5McwmTjwHHDYOtGFJSTeFXmj9r7Nz5IGw/exec";
 
     const form = document.getElementById('leadForm');
@@ -205,20 +202,14 @@
     form.addEventListener('submit', async (e) => {
       e.preventDefault();
 
-      // Honeypot: se preenchido, cancela
-      if(form.website && form.website.value) {
-        return; // silêncio para bots
-      }
+      if(form.website && form.website.value) { return; } // honeypot
 
-      // Coletar dados
       const fd = new FormData(form);
-      const helps = fd.getAll('help'); // todas as checkboxes marcadas
-
-      // Anexa detalhe de "Outro" quando marcado
+      const helps = fd.getAll('help');
       const otherDetail = (fd.get('otherDetail') || '').trim();
       const helpWithOther = helps.includes('Outro') && otherDetail
         ? helps.map(h => h === 'Outro' ? `Outro: ${otherDetail}` : h)
-        : helps.filter(h => h !== 'Outro'); // remove "Outro" puro se sem detalhe
+        : helps.filter(h => h !== 'Outro');
 
       const payload = {
         firstName: (fd.get('firstName') || '').trim(),
@@ -235,7 +226,6 @@
         timestamp: new Date().toISOString()
       };
 
-      // UX feedback
       statusEl.className = "";
       statusEl.textContent = "Enviando...";
       submitBtn.disabled = true;
@@ -247,19 +237,22 @@
           body: JSON.stringify(payload)
         });
 
-        // Alguns Apps Script retornam 200 com texto simples
-        const text = await res.text();
-        if(!res.ok) throw new Error(text || `HTTP ${res.status}`);
+        const text = await res.text(); // debug
+        if (!res.ok) throw new Error(`HTTP ${res.status} — ${text}`);
 
-        statusEl.className = "ok";
-        statusEl.textContent = "Recebido! Vamos falar com você em breve.";
-        form.reset();
-        otherField.style.display = 'none';
-        otherText.disabled = true;
-      } catch(err) {
-        console.error(err);
+        if (text.trim().toUpperCase().includes("OK")) {
+          statusEl.className = "ok";
+          statusEl.textContent = "Recebido! Vamos falar com você em breve.";
+          form.reset();
+          otherField.style.display = 'none';
+          otherText.disabled = true;
+        } else {
+          throw new Error(text || "Resposta inesperada do servidor");
+        }
+      } catch (err) {
+        console.error("Falha no envio:", err);
         statusEl.className = "err";
-        statusEl.textContent = "Não foi possível enviar agora. Tente novamente em instantes.";
+        statusEl.textContent = "Falha no envio: " + (err.message || "erro desconhecido");
       } finally {
         submitBtn.disabled = false;
       }
