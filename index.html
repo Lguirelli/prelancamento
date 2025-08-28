@@ -3,73 +3,116 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Vamos Escalar Juntos — Guia</title>
+  <title>Guia — Vamos Escalar Juntos</title>
 
+  <!-- Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500&family=Poppins:wght@700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500&family=Poppins:wght@700;800&display=swap" rel="stylesheet">
+
+  <meta name="theme-color" content="#0B0C10">
 
   <style>
+    /* ================== Tokens base ================== */
     :root{
-      --bg:#0B0C10; --text:#fff; --muted:rgba(214,218,229,.85);
-      --border:rgba(255,255,255,.12); --surface:rgba(255,255,255,.04);
-      --purple:#7269E3; --purple-strong:#625BD6; --mint:#98DEA3;
-      --shadow:0 10px 30px rgba(0,0,0,.5);
+      --bg:#0B0C10; --text:#ffffff; --muted:rgba(214,218,229,.85);
+      --surface:rgba(255,255,255,.04); --border:rgba(255,255,255,.12);
+      --purple:#7269E3; --purple-strong:#625BD6; --mint:#98DEA3; --mauve:#A783A6;
+      --shadow:0 10px 30px rgba(0,0,0,.35);
+      --header-h:64px;
+      --font-heading:'Poppins', system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+      --font-body:'Inter', ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
     }
     *{box-sizing:border-box}
-    body{margin:0;background:var(--bg);color:var(--text);font-family:Inter,system-ui,sans-serif;padding:40px 16px}
-    .card{border:1px solid var(--border);border-radius:20px;box-shadow:var(--shadow);padding:28px;max-width:860px;margin:40px auto;background:none}
-    .title{font-family:Poppins,ui-serif;font-weight:700;font-size:28px;margin:0 0 6px;text-align:center;color:var(--mint)}
-    .subtitle{margin:0 0 20px;text-align:center;color:var(--muted)}
-    .grid{display:grid;gap:14px}.grid-2{grid-template-columns:1fr 1fr}
-    @media (max-width:720px){.grid-2{grid-template-columns:1fr}}
-    .field{display:grid;gap:8px}
-    .input, textarea{background:rgba(255,255,255,.05);border:1px solid var(--border);border-radius:12px;padding:12px 14px;font-size:14px;color:var(--text)}
-    .input:focus, textarea:focus{outline:none;border-color:var(--purple);box-shadow:0 0 0 3px rgba(114,105,227,.25)}
-    textarea{min-height:120px;resize:vertical;margin-top:6px}
+    html,body{height:100%}
+    body{
+      margin:0; background:var(--bg); color:var(--text);
+      font:400 16px/1.6 var(--font-body);
+      -webkit-font-smoothing:antialiased; text-rendering:optimizeLegibility;
+      padding-top:calc(var(--header-h) - 10px);
+    }
+    a{color:inherit; text-decoration:none}
+    img{max-width:100%; height:auto; display:block}
+    .container{width:100%; max-width:1120px; margin:0 auto; padding:0 20px}
+
+    /* ================== HEADER (logo central) ================== */
+    .site-header{
+      position:fixed; inset:0 0 auto 0; z-index:1000;
+      background:rgba(11,12,16,.6);
+      backdrop-filter:saturate(140%) blur(8px);
+      -webkit-backdrop-filter:saturate(140%) blur(8px);
+    }
+    .nav{display:grid; grid-template-columns:1fr auto 1fr; align-items:center; min-height:var(--header-h)}
+    .brand{grid-column:2; justify-self:center; display:inline-flex; align-items:center}
+    .brand img{height:28px; width:auto}
+
+    /* ================== CARTÃO/FORM ================== */
+    .card{
+      border:1px solid var(--border);
+      border-radius:20px;
+      box-shadow:var(--shadow);
+      padding:28px;
+      max-width:860px;
+      margin:40px auto;
+      background:none;
+    }
+    .title{font-family:var(--font-heading); font-weight:800; font-size:28px; margin:0 0 6px; text-align:center; color:var(--mint)}
+    .subtitle{margin:0 0 20px; text-align:center; color:var(--muted)}
+    .grid{display:grid; gap:14px}
+    .grid-2{grid-template-columns:1fr 1fr}
+    @media(max-width:720px){.grid-2{grid-template-columns:1fr}}
+    .field{display:grid; gap:8px}
+    .input, textarea{
+      background:rgba(255,255,255,.05); border:1px solid var(--border);
+      border-radius:12px; padding:12px 14px; font-size:14px; color:var(--text)
+    }
+    .input:focus, textarea:focus{outline:none; border-color:var(--purple); box-shadow:0 0 0 3px rgba(114,105,227,.25)}
+    textarea{min-height:120px; resize:vertical; margin-top:6px}
 
     /* Checkboxes estilizados */
-    .choices{display:grid;gap:10px}
-    .choice{display:flex;align-items:center;gap:12px;padding:14px;border:1px solid var(--border);border-radius:14px;background:var(--surface);cursor:pointer;transition:.15s}
+    .choices{display:grid; gap:10px}
+    .choice{display:flex; align-items:center; gap:12px; padding:14px; border:1px solid var(--border); border-radius:14px; background:var(--surface); cursor:pointer; transition:.15s}
     .choice:hover{border-color:#7f86ff44}
-    .choice input{appearance:none;width:18px;height:18px;border:2px solid var(--border);border-radius:6px;display:grid;place-content:center;transition:.15s;background:transparent}
-    .choice input::after{content:"";width:10px;height:10px;border-radius:3px;transform:scale(0);transition:.15s;background:var(--purple)}
+    .choice input{appearance:none; width:18px; height:18px; border:2px solid var(--border); border-radius:6px; display:grid; place-content:center; transition:.15s; background:transparent}
+    .choice input::after{content:""; width:10px; height:10px; border-radius:3px; transform:scale(0); transition:.15s; background:var(--purple)}
     .choice input:checked{border-color:var(--purple)}
     .choice input:checked::after{transform:scale(1)}
-    .choice .label{line-height:1.3;user-select:none}
+    .choice .label{line-height:1.3; user-select:none}
 
-    .btn{margin-top:16px;background:linear-gradient(180deg,var(--purple),var(--purple-strong));color:#fff;font-weight:700;border:none;border-radius:999px;padding:12px 18px;cursor:pointer;display:block;margin-left:auto;margin-right:auto}
-    .btn[disabled]{opacity:.6;cursor:not-allowed}
-    .spinner{display:inline-block;width:16px;height:16px;border:2px solid #fff;border-right-color:transparent;border-radius:50%;margin-left:8px;vertical-align:-3px;animation:spin .8s linear infinite}
+    /* Botão */
+    .btn{margin-top:16px; background:linear-gradient(180deg,var(--purple),var(--purple-strong)); color:#fff; font-weight:700; border:none; border-radius:999px; padding:12px 18px; cursor:pointer; display:block; margin-left:auto; margin-right:auto}
+    .btn[disabled]{opacity:.6; cursor:not-allowed}
+    .spinner{display:inline-block; width:16px; height:16px; border:2px solid #fff; border-right-color:transparent; border-radius:50%; margin-left:8px; vertical-align:-3px; animation:spin .8s linear infinite}
     @keyframes spin{to{transform:rotate(360deg)}}
-
-    #otherField{display:none}
-    #status{margin-top:12px;text-align:center;font-size:14px;color:var(--muted)}
+    #status{margin-top:12px; text-align:center; font-size:14px; color:var(--muted)}
     #status.ok{color:var(--mint)} #status.err{color:#ff7b7b}
-  </style>
+    #otherField{display:none}
 
-  <!-- reCAPTCHA v3 -->
-  <script>
-    // SUA SITE KEY (cliente)
-    const RECAPTCHA_SITE_KEY = "6LdeQ7UrAAAAAKFcbKoaZF_duTuabz7eddw8Tlf7";
-    // carrega lib
-    (function(){const s=document.createElement("script");s.src="https://www.google.com/recaptcha/api.js?render="+encodeURIComponent(RECAPTCHA_SITE_KEY);s.async=true;s.defer=true;document.head.appendChild(s);})();
-    // token cacheado para acelerar
-    let cachedToken=null;
-    function getRecaptchaToken(action="submit"){
-      return new Promise((resolve,reject)=>{
-        if(!window.grecaptcha) return reject(new Error("reCAPTCHA não carregado"));
-        grecaptcha.ready(()=>{
-          grecaptcha.execute(RECAPTCHA_SITE_KEY,{action}).then(t=>{cachedToken=t;resolve(t)}).catch(reject);
-        });
-      });
+    /* ================== FOOTER ================== */
+    .footer{padding:32px 0; background:transparent; color:var(--mauve)}
+    .footer-content{display:flex; justify-content:space-between; align-items:center; gap:12px; flex-wrap:wrap}
+    .footer-links{display:flex; gap:12px}
+    .footer-links a{color:var(--text); transition:color .3s ease}
+    .footer-links a:hover{color:var(--purple)}
+    @media (max-width:640px){
+      .footer-content{flex-direction:column; align-items:center; text-align:center; gap:8px}
+      .footer-links{justify-content:center; flex-wrap:wrap}
     }
-    // pré-carrega um token ao primeiro toque/scroll
-    window.addEventListener('pointerdown',()=>{ if(!cachedToken) getRecaptchaToken("prefetch").catch(()=>{}); },{once:true});
-  </script>
+  </style>
 </head>
 <body>
 
+  <!-- ============ HEADER (logo centralizado) ============ -->
+  <header class="site-header" aria-label="Cabeçalho da Guia (Agência)">
+    <div class="container nav">
+      <a href="#" class="brand" aria-label="Página inicial da Guia">
+        <!-- Troque LOGO.svg pelo seu arquivo -->
+        <img src="LOGO.svg" alt="Logo Guia" decoding="async" loading="eager" />
+      </a>
+    </div>
+  </header>
+
+  <!-- ============ FORMULÁRIO ============ -->
   <main>
     <form class="card" id="leadForm" autocomplete="on">
       <h1 class="title">Vamos Escalar Juntos</h1>
@@ -114,22 +157,40 @@
     </form>
   </main>
 
+  <!-- ============ FOOTER ============ -->
+  <footer class="footer">
+    <div class="container footer-content">
+      <small class="muted">© <span id="footer-year"></span> Guia — Todos os direitos reservados</small>
+      <div class="footer-links">
+        <a class="tag" href="https://www.instagram.com" target="_blank" rel="noopener" aria-label="Instagram">Instagram</a>
+        <a class="tag" href="https://wa.me/5511999999999" target="_blank" rel="noopener" aria-label="WhatsApp">WhatsApp</a>
+        <a class="tag" href="https://www.linkedin.com" target="_blank" rel="noopener" aria-label="LinkedIn">LinkedIn</a>
+      </div>
+    </div>
+  </footer>
+
   <script>
-    // toggle "Outro"
+    // Ano do footer
+    document.getElementById('footer-year').textContent = new Date().getFullYear();
+
+    // "Outro" on/off
     const otherCheck = document.getElementById('otherCheck');
     const otherField = document.getElementById('otherField');
     const otherText  = document.getElementById('otherText');
-    otherCheck.addEventListener('change',()=>{const on=otherCheck.checked; otherField.style.display=on?'block':'none'; otherText.disabled=!on; if(on) otherText.focus(); else otherText.value="";});
+    otherCheck.addEventListener('change',()=>{
+      const on = otherCheck.checked;
+      otherField.style.display = on ? 'block' : 'none';
+      otherText.disabled = !on;
+      if(on) otherText.focus(); else otherText.value="";
+    });
 
-    // URL do seu Apps Script (/exec)
-    const ENDPOINT = "https://script.google.com/macros/s/AKfycbwc8YRYwkOdr-XYhYT3DIRvEyslbHzHm83CbPS1kz4tpKuC0v9IUqUOotlqrSKbWqAo8Q/exec";
-
+    // ====== ENVIO ======
+    const ENDPOINT = "https://script.google.com/macros/s/AKfycbxmyRoQId4APU70xoGB-3E9A1jaYhbJGGS7-JVy_9yCdsC3cgKECgh09w17ZTHEN9HMCg/exec"; /* sua URL /exec */
     const form = document.getElementById('leadForm');
     const statusEl = document.getElementById('status');
     const submitBtn = document.getElementById('submitBtn');
     const spin = document.getElementById('spin');
 
-    // helper com timeout
     function fetchWithTimeout(resource, options = {}, timeoutMs = 8000){
       const controller=new AbortController();
       const id=setTimeout(()=>controller.abort(),timeoutMs);
@@ -146,52 +207,43 @@
       spin.style.display = "inline-block";
 
       try {
-        // token do reCAPTCHA (ação 'submit' para bater com o .gs)
-        const recaptchaToken = cachedToken || await getRecaptchaToken("submit");
-
-        // coleta dos campos
-        const firstName = form.firstName.value.trim();
-        const lastName  = form.lastName.value.trim();
-        const company   = form.company.value.trim();
-        const segment   = form.segment.value.trim();
-        const phone     = form.phone.value.trim();
-        const message   = form.message.value.trim();
-        const privacy   = form.privacy.checked;
-
-        // checkboxes
-        const checkedHelps = Array.from(document.querySelectorAll('input[name="help"]:checked')).map(i=>i.value);
-        const otherDetail = otherCheck.checked ? (otherText.value || '').trim() : '';
-        const helpNormalized = checkedHelps.map(h => (h === 'Outro' && otherDetail) ? `Outro: ${otherDetail}` : h);
-
         const payload = {
-          firstName, lastName, company, segment, phone,
-          help: helpNormalized,
-          otherDetail, // opcional, o .gs também reconhece
-          message, privacy,
-          source: 'site-vamos-escalar-juntos',
+          firstName: form.firstName.value.trim(),
+          lastName : form.lastName.value.trim(),
+          company  : form.company.value.trim(),
+          segment  : form.segment.value.trim(),
+          phone    : form.phone.value.trim(),
+          // checkboxes
+          help: Array.from(document.querySelectorAll('input[name="help"]:checked')).map(i=>{
+            if (i.value === 'Outro') {
+              const extra = (otherText.value||'').trim();
+              return extra ? `Outro: ${extra}` : 'Outro';
+            }
+            return i.value;
+          }),
+          otherDetail: otherCheck.checked ? (otherText.value || '').trim() : '',
+          message : form.message.value.trim(),
+          privacy : form.privacy.checked,
+          source  : 'site-vamos-escalar-juntos',
           userAgent: navigator.userAgent,
-          page: location.href,
-          timestamp: new Date().toISOString(),
-          recaptchaToken
+          page    : location.href,
+          timestamp: new Date().toISOString()
         };
 
-        // 1ª tentativa com timeout curto (8s) — JSON com header text/plain (CORS safe)
-        try{
-          const res = await fetchWithTimeout(ENDPOINT, {
-            method: "POST",
-            headers: { "Content-Type": "text/plain;charset=utf-8" },
-            body: JSON.stringify(payload)
-          }, 8000);
-          const text = await res.text();
-          if (!(res.ok && text.trim().toUpperCase().includes("OK"))) throw new Error(text || `HTTP ${res.status}`);
-          statusEl.className="ok"; statusEl.textContent="Recebido! Vamos falar com você em breve.";
-        }catch(err){
-          // fallback otimista (no-cors): envia mesmo sem conseguir ler a resposta
-          await fetch(ENDPOINT, { method:"POST", headers:{ "Content-Type":"text/plain;charset=utf-8" }, body: JSON.stringify(payload), mode:"no-cors" });
-          statusEl.className="ok"; statusEl.textContent="Recebido! (confirmação otimista)";
-        }
+        const res = await fetchWithTimeout(ENDPOINT, {
+          method: "POST",
+          headers: { "Content-Type": "text/plain;charset=utf-8" }, // JSON sem preflight
+          body: JSON.stringify(payload)
+        }, 8000);
 
-        form.reset(); otherField.style.display='none'; otherText.disabled=true; cachedToken=null;
+        const text = await res.text();
+        if (res.ok && text.trim().toUpperCase().includes("OK")){
+          statusEl.className="ok";
+          statusEl.textContent="Recebido! Vamos falar com você em breve.";
+          form.reset(); otherField.style.display='none'; otherText.disabled=true;
+        } else {
+          throw new Error(text || `HTTP ${res.status}`);
+        }
       } catch (err) {
         console.error("Falha no envio:", err);
         statusEl.className = "err";
