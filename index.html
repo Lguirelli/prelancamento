@@ -111,10 +111,6 @@
 </head>
 <body>
 
-  <!-- Header compartilhado -->
-  <div id="site-header"></div>
-  <script src="header.js" defer></script>
-
   <main id="conteudo">
     <form class="card" id="leadForm">
       <h1 class="title">Vamos Escalar Juntos</h1>
@@ -131,30 +127,12 @@
       </div>
 
       <h3>Com o que podemos ajudar?</h3>
-      <label class="choice">
-        <input type="checkbox" name="help" value="Atendimento inicial automático — recepção e respostas rápidas no WhatsApp">
-        <span>Atendimento inicial automático — recepção e respostas rápidas no WhatsApp</span>
-      </label>
-      <label class="choice">
-        <input type="checkbox" name="help" value="Agendamento de horários — integração com agenda para marcações automáticas">
-        <span>Agendamento de horários — integração com agenda para marcações automáticas.</span>
-      </label>
-      <label class="choice">
-        <input type="checkbox" name="help" value="Suporte ao cliente — respostas inteligentes para dúvidas frequentes">
-        <span>Suporte ao cliente — respostas inteligentes para dúvidas frequentes.</span>
-      </label>
-      <label class="choice">
-        <input type="checkbox" name="help" value="Fluxos de atendimento personalizados — atendimento sob medida para o seu negócio">
-        <span>Fluxos de atendimento personalizados — atendimento sob medida para o seu negócio.</span>
-      </label>
-      <label class="choice">
-        <input type="checkbox" name="help" value="Automação de vendas — do primeiro contato até a conversão, direto no WhatsApp">
-        <span>Automação de vendas — do primeiro contato até a conversão, direto no WhatsApp.</span>
-      </label>
-      <label class="choice">
-        <input type="checkbox" id="otherCheck" name="help" value="Outro">
-        <span>Outro</span>
-      </label>
+      <label class="choice"><input type="checkbox" name="help" value="Atendimento inicial automático"> Atendimento inicial automático</label>
+      <label class="choice"><input type="checkbox" name="help" value="Agendamento de horários"> Agendamento de horários</label>
+      <label class="choice"><input type="checkbox" name="help" value="Suporte ao cliente"> Suporte ao cliente</label>
+      <label class="choice"><input type="checkbox" name="help" value="Fluxos personalizados"> Fluxos personalizados</label>
+      <label class="choice"><input type="checkbox" name="help" value="Automação de vendas"> Automação de vendas</label>
+      <label class="choice"><input type="checkbox" id="otherCheck" name="help" value="Outro"> Outro</label>
 
       <div class="field" id="otherField">
         <input class="input" type="text" id="otherText" name="otherDetail" placeholder="Descreva o Outro">
@@ -162,24 +140,16 @@
 
       <textarea name="message" required placeholder="Descreva seu projeto: dados, volume, cronograma e resultados esperados"></textarea>
 
-      <div class="field">
-        <label><input type="checkbox" name="privacy" required> Eu concordo com a Política de Privacidade</label>
-      </div>
-
-      <!-- honeypot -->
-      <input type="text" name="website" autocomplete="off" tabindex="-1" style="position:absolute; left:-9999px; opacity:0" aria-hidden="true">
+      <div class="field"><label><input type="checkbox" name="privacy" required> Eu concordo com a Política de Privacidade</label></div>
+      <input type="text" name="website" style="display:none"> <!-- honeypot -->
 
       <button class="btn" id="submitBtn" type="submit">Enviar</button>
       <p id="status" aria-live="polite"></p>
     </form>
   </main>
 
-  <!-- Footer compartilhado -->
-  <div id="site-footer"></div>
-  <script src="footer.js" defer></script>
-
   <script>
-    // Mostrar/ocultar "Outro"
+    // mostrar/ocultar "Outro"
     const otherCheck = document.getElementById('otherCheck');
     const otherField = document.getElementById('otherField');
     const otherText  = document.getElementById('otherText');
@@ -192,8 +162,8 @@
       if(on) otherText.focus(); else otherText.value = "";
     });
 
-    // URL do Web App (troque após reimplantar, se precisar)
-    const ENDPOINT = "https://script.google.com/macros/s/AKfycbw-SjEti8YbDE9vFvHalcKGdD4wnbpsGNfOQ5McwmTjwHHDYOtGFJSTeFXmj9r7Nz5IGw/exec";
+    // endpoint do Apps Script
+    const ENDPOINT = "https://script.google.com/macros/s/AKfycbz6mX74mLFLqbztLFD_Yo7JjsCuiX6G2LWjgcMYjqhkt8lzEu8maapBfdV5eSRbjcRumA/exec";
 
     const form = document.getElementById('leadForm');
     const statusEl = document.getElementById('status');
@@ -201,8 +171,7 @@
 
     form.addEventListener('submit', async (e) => {
       e.preventDefault();
-
-      if(form.website && form.website.value) { return; } // honeypot
+      if(form.website && form.website.value) return; // honeypot
 
       const fd = new FormData(form);
       const helps = fd.getAll('help');
@@ -212,13 +181,13 @@
         : helps.filter(h => h !== 'Outro');
 
       const payload = {
-        firstName: (fd.get('firstName') || '').trim(),
-        lastName:  (fd.get('lastName')  || '').trim(),
-        company:   (fd.get('company')   || '').trim(),
-        segment:   (fd.get('segment')   || '').trim(),
-        phone:     (fd.get('phone')     || '').trim(),
+        firstName: fd.get('firstName') || "",
+        lastName:  fd.get('lastName')  || "",
+        company:   fd.get('company')   || "",
+        segment:   fd.get('segment')   || "",
+        phone:     fd.get('phone')     || "",
         help:      helpWithOther,
-        message:   (fd.get('message')   || '').trim(),
+        message:   fd.get('message')   || "",
         privacy:   !!fd.get('privacy'),
         source:    "site-vamos-escalar-juntos",
         userAgent: navigator.userAgent,
@@ -226,8 +195,8 @@
         timestamp: new Date().toISOString()
       };
 
-      statusEl.className = "";
       statusEl.textContent = "Enviando...";
+      statusEl.className = "";
       submitBtn.disabled = true;
 
       try {
@@ -236,23 +205,20 @@
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify(payload)
         });
-
-        const text = await res.text(); // debug
-        if (!res.ok) throw new Error(`HTTP ${res.status} — ${text}`);
-
-        if (text.trim().toUpperCase().includes("OK")) {
+        const text = await res.text();
+        if (res.ok && text.trim().toUpperCase().includes("OK")) {
           statusEl.className = "ok";
           statusEl.textContent = "Recebido! Vamos falar com você em breve.";
           form.reset();
           otherField.style.display = 'none';
           otherText.disabled = true;
         } else {
-          throw new Error(text || "Resposta inesperada do servidor");
+          throw new Error(text);
         }
       } catch (err) {
-        console.error("Falha no envio:", err);
+        console.error("Erro:", err);
         statusEl.className = "err";
-        statusEl.textContent = "Falha no envio: " + (err.message || "erro desconhecido");
+        statusEl.textContent = "Falha no envio: " + err.message;
       } finally {
         submitBtn.disabled = false;
       }
