@@ -34,27 +34,42 @@
     img{max-width:100%; height:auto; display:block}
     .container{width:100%; max-width:1120px; margin:0 auto; padding:0 20px}
 
+    /* HEADER centralizado */
     .site-header{
       position:fixed; inset:0 0 auto 0; z-index:1000;
       background:rgba(11,12,16,.6);
       backdrop-filter:saturate(140%) blur(8px);
       -webkit-backdrop-filter:saturate(140%) blur(8px);
+      display:flex; justify-content:center; align-items:center;
+      height:var(--header-h);
     }
-    .nav{display:grid; grid-template-columns:1fr auto 1fr; align-items:center; min-height:var(--header-h)}
-    .brand{grid-column:2; justify-self:center; display:inline-flex; align-items:center}
-    .brand img{height:28px; width:auto}
+    .brand{display:inline-flex; align-items:center}
+    .brand img{height:32px; width:auto}
 
-    .card{border:1px solid var(--border); border-radius:20px; box-shadow:var(--shadow); padding:28px; max-width:860px; margin:40px auto; background:none}
+    /* CARD/FORM */
+    .card{
+      border:1px solid var(--border);
+      border-radius:20px;
+      box-shadow:var(--shadow);
+      padding:28px;
+      max-width:860px;
+      margin:40px auto;
+      background:none;
+    }
     .title{font-family:var(--font-heading); font-weight:800; font-size:28px; margin:0 0 6px; text-align:center; color:var(--mint)}
     .subtitle{margin:0 0 20px; text-align:center; color:var(--muted)}
     .grid{display:grid; gap:14px}
     .grid-2{grid-template-columns:1fr 1fr}
     @media(max-width:720px){.grid-2{grid-template-columns:1fr}}
     .field{display:grid; gap:8px}
-    .input, textarea{background:rgba(255,255,255,.05); border:1px solid var(--border); border-radius:12px; padding:12px 14px; font-size:14px; color:var(--text)}
+    .input, textarea{
+      background:rgba(255,255,255,.05); border:1px solid var(--border);
+      border-radius:12px; padding:12px 14px; font-size:14px; color:var(--text)
+    }
     .input:focus, textarea:focus{outline:none; border-color:var(--purple); box-shadow:0 0 0 3px rgba(114,105,227,.25)}
     textarea{min-height:120px; resize:vertical; margin-top:6px}
 
+    /* Checkboxes */
     .choices{display:grid; gap:10px}
     .choice{display:flex; align-items:center; gap:12px; padding:14px; border:1px solid var(--border); border-radius:14px; background:var(--surface); cursor:pointer; transition:.15s}
     .choice:hover{border-color:#7f86ff44}
@@ -64,6 +79,7 @@
     .choice input:checked::after{transform:scale(1)}
     .choice .label{line-height:1.3; user-select:none}
 
+    /* Botão */
     .btn{margin-top:16px; background:linear-gradient(180deg,var(--purple),var(--purple-strong)); color:#fff; font-weight:700; border:none; border-radius:999px; padding:12px 18px; cursor:pointer; display:block; margin-left:auto; margin-right:auto}
     .btn[disabled]{opacity:.6; cursor:not-allowed}
     .spinner{display:inline-block; width:16px; height:16px; border:2px solid #fff; border-right-color:transparent; border-radius:50%; margin-left:8px; vertical-align:-3px; animation:spin .8s linear infinite}
@@ -71,42 +87,55 @@
     #status{margin-top:12px; text-align:center; font-size:14px; color:var(--muted)}
     #status.ok{color:var(--mint)} #status.err{color:#ff7b7b}
     #otherField{display:none}
-    .sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);border:0}
+
+    /* FOOTER */
+    .footer{padding:32px 0; background:transparent; color:var(--mauve)}
+    .footer-content{display:flex; justify-content:space-between; align-items:center; gap:12px; flex-wrap:wrap}
+    .footer-links{display:flex; gap:12px}
+    .footer-links a{color:var(--text); transition:color .3s ease}
+    .footer-links a:hover{color:var(--purple)}
+    @media (max-width:640px){
+      .footer-content{flex-direction:column; align-items:center; text-align:center; gap:8px}
+      .footer-links{justify-content:center; flex-wrap:wrap}
+    }
   </style>
 
   <!-- reCAPTCHA v3 (cliente) -->
   <script>
+    // SUA Site Key
     const RECAPTCHA_SITE_KEY = "6LdeQ7UrAAAAAKFcbKoaZF_duTuabz7eddw8Tlf7";
+
+    // carrega script do Google
     (function(){
       const s=document.createElement("script");
       s.src="https://www.google.com/recaptcha/api.js?render="+encodeURIComponent(RECAPTCHA_SITE_KEY);
       s.async=true; s.defer=true; document.head.appendChild(s);
     })();
-    let cachedToken=null;
+
+    // helper para obter token
     function getRecaptchaToken(action="submit"){
       return new Promise((resolve,reject)=>{
         if(!window.grecaptcha){ return reject(new Error("reCAPTCHA não carregado")); }
         grecaptcha.ready(()=>{
-          grecaptcha.execute(RECAPTCHA_SITE_KEY,{action}).then(t=>{cachedToken=t;resolve(t)}).catch(reject);
+          grecaptcha.execute(RECAPTCHA_SITE_KEY,{action}).then(resolve).catch(reject);
         });
       });
     }
-    // pré-carrega um token para reduzir latência
-    window.addEventListener('pointerdown',()=>{ if(!cachedToken) getRecaptchaToken("prefetch").catch(()=>{}); },{once:true});
   </script>
 </head>
 <body>
 
+  <!-- HEADER centralizado -->
   <header class="site-header" aria-label="Cabeçalho da Guia (Agência)">
-    <div class="container nav">
-      <a href="#" class="brand" aria-label="Página inicial da Guia">
-        <img src="LOGO.svg" alt="Logo Guia" decoding="async" loading="eager" />
-      </a>
-    </div>
+    <a href="#" class="brand" aria-label="Página inicial da Guia">
+      <!-- Troque por seu caminho centralizado (ex.: raw.githubusercontent...) se quiser -->
+      <img src="LOGO.svg" alt="Logo Guia" decoding="async" loading="eager" />
+    </a>
   </header>
 
+  <!-- FORM -->
   <main>
-    <form class="card" id="leadForm" autocomplete="on">
+    <form class="card" id="leadForm" autocomplete="on" novalidate>
       <h1 class="title">Vamos Escalar Juntos</h1>
       <p class="subtitle">Do primeiro contato à conversão: leve seu atendimento no WhatsApp para o próximo nível.</p>
 
@@ -115,7 +144,7 @@
         <div class="field"><input class="input" name="lastName" placeholder="Sobrenome" required></div>
         <div class="field"><input class="input" name="company" placeholder="Nome da empresa" required></div>
         <div class="field"><input class="input" name="segment" placeholder="Segmento de mercado"></div>
-        <div class="field" style="grid-column:1/-1"><input type="tel" class="input" name="phone" placeholder="Telefone" required pattern="[0-9\\s()+-]{8,}"></div>
+        <div class="field" style="grid-column:1/-1"><input type="tel" class="input" name="phone" placeholder="Telefone" required pattern="[0-9\s()+-]{8,}"></div>
       </div>
 
       <h3 style="margin-top:6px">Com o que podemos ajudar?</h3>
@@ -142,13 +171,14 @@
       </div>
 
       <!-- Honeypot -->
-      <input type="text" name="website" autocomplete="off" tabindex="-1" class="sr-only" aria-hidden="true">
+      <input type="text" name="website" autocomplete="off" tabindex="-1" style="position:absolute; left:-9999px; opacity:0" aria-hidden="true">
 
       <button class="btn" id="submitBtn" type="submit">Enviar <span id="spin" class="spinner" style="display:none"></span></button>
       <p id="status" aria-live="polite"></p>
     </form>
   </main>
 
+  <!-- FOOTER -->
   <footer class="footer">
     <div class="container footer-content">
       <small class="muted">© <span id="footer-year"></span> Guia — Todos os direitos reservados</small>
@@ -161,9 +191,10 @@
   </footer>
 
   <script>
+    // Ano do footer
     document.getElementById('footer-year').textContent = new Date().getFullYear();
 
-    // "Outro" toggle
+    // "Outro" on/off
     const otherCheck = document.getElementById('otherCheck');
     const otherField = document.getElementById('otherField');
     const otherText  = document.getElementById('otherText');
@@ -175,12 +206,13 @@
     });
 
     // ====== ENVIO ======
-    const ENDPOINT = "https://script.google.com/macros/s/AKfycbw0VlXwcsueOIqNOzFWcZHN7gL4n09EhFuEEwV5_5yOvbyb6tf2OLtZV4HTF_eO8HSKSw/exec";
+    const ENDPOINT = "https://script.google.com/macros/s/AKfycbzuzCc4-EU0S1Yz4Y6N1jr-XBCXot0sfX3N3mvD4wHwiheE7NxZ3ufAYPD79VmAgWsr3w/exec"; /* sua URL /exec */
     const form = document.getElementById('leadForm');
     const statusEl = document.getElementById('status');
     const submitBtn = document.getElementById('submitBtn');
     const spin = document.getElementById('spin');
 
+    // fetch com timeout
     function fetchWithTimeout(resource, options = {}, timeoutMs = 12000){
       const controller=new AbortController();
       const id=setTimeout(()=>controller.abort(),timeoutMs);
@@ -198,10 +230,10 @@
       spin.style.display = "inline-block";
 
       try {
-        // token do reCAPTCHA v3
-        const recaptchaToken = cachedToken || await getRecaptchaToken("submit");
+        // 1) token reCAPTCHA v3
+        const recaptchaToken = await getRecaptchaToken("submit");
 
-        // FormData (sem headers)
+        // 2) FormData (sem headers)
         const fd = new FormData(form);
 
         // Normaliza "Outro"
@@ -214,7 +246,7 @@
           fd.delete('otherDetail');
         }
 
-        // Metadados + reCAPTCHA
+        // Metadados + token
         fd.append('recaptchaToken', recaptchaToken);
         fd.append('source','site-vamos-escalar-juntos');
         fd.append('userAgent', navigator.userAgent);
@@ -229,13 +261,13 @@
             throw new Error(text || `HTTP ${res.status}`);
           }
         }catch(err){
-          // Fallback otimista, mas ainda envia o token
+          // fallback otimista
           await fetch(ENDPOINT, { method:"POST", body: fd, mode:"no-cors" });
         }
 
         statusEl.className = "ok";
         statusEl.textContent = "Recebido! Vamos falar com você em breve.";
-        form.reset(); otherField.style.display='none'; otherText.disabled=true; cachedToken=null;
+        form.reset(); otherField.style.display='none'; otherText.disabled=true;
 
       } catch (err) {
         console.error("Falha no envio:", err);
