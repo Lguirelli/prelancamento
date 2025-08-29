@@ -59,7 +59,7 @@
       box-shadow:0 0 0 3px rgba(114,105,227,.25)}
     textarea{min-height:120px; resize:vertical; margin-top:6px}
 
-    /* Checkboxes – área 100% e preenchimento completo no mobile */
+    /* Checkboxes – mobile cheio */
     .choices{display:grid; gap:12px}
     .choice{
       width:100%;
@@ -73,8 +73,6 @@
     }
     .choice:hover{border-color:#7f86ff44}
     .choice .label{line-height:1.35; user-select:none; flex:1}
-
-    /* checkbox custom – quadrado completamente preenchido quando marcado */
     .choice input{
       -webkit-appearance:none; appearance:none;
       position:relative;
@@ -84,20 +82,13 @@
       outline:none; transition:border-color .15s, background .15s;
     }
     .choice input::after{
-      content:""; position:absolute; inset:3px; /* ocupa quase tudo */
+      content:""; position:absolute; inset:3px;
       border-radius:4px; background:var(--purple);
       opacity:0; transform:scale(.9);
       transition:opacity .12s ease, transform .12s ease;
     }
-    .choice input:checked{
-      border-color:var(--purple);
-      background:rgba(114,105,227,.12);
-    }
-    .choice input:checked::after{
-      opacity:1; transform:scale(1);
-    }
-
-    /* No mobile, aumente ainda mais a área de toque e o contraste */
+    .choice input:checked{border-color:var(--purple); background:rgba(114,105,227,.12)}
+    .choice input:checked::after{opacity:1; transform:scale(1)}
     @media (max-width:720px){
       .choice{padding:18px 20px; border-radius:18px}
       .choice input{width:26px; height:26px; flex-basis:26px}
@@ -116,7 +107,7 @@
     #otherField{display:none}
   </style>
 
-  <!-- reCAPTCHA v3 com pré-token (mantido) -->
+  <!-- reCAPTCHA v3 com pré-token -->
   <script>
     const RECAPTCHA_SITE_KEY = "6LdeQ7UrAAAAAKFcbKoaZF_duTuabz7eddw8Tlf7";
     (function(){
@@ -164,16 +155,16 @@
         <div class="field"><input class="input" name="lastName" placeholder="Sobrenome" required></div>
         <div class="field"><input class="input" name="company" placeholder="Nome da empresa" required></div>
         <div class="field"><input class="input" name="segment" placeholder="Segmento de mercado"></div>
-        <div class="field" style="grid-column:1/-1"><input type="tel" class="input" name="phone" placeholder="Telefone" required pattern="[0-9\s()+-]{8,}"></div>
+        <div class="field" style="grid-column:1/-1"><input type="tel" class="input" name="phone" placeholder="Telefone" required pattern="[0-9\\s()+-]{8,}"></div>
       </div>
 
       <h3 style="margin-top:6px">Com o que podemos ajudar?</h3>
       <div class="choices">
-        <label class="choice"><input type="checkbox" name="help" value="Atendimento inicial automático — recepção e respostas rápidas no WhatsApp"><span class="label">Atendimento inicial automático — recepção e respostas rápidas no WhatsApp</span></label>
-        <label class="choice"><input type="checkbox" name="help" value="Agendamento de horários — integração com agenda para marcações automáticas"><span class="label">Agendamento de horários — integração com agenda para marcações automáticas</span></label>
-        <label class="choice"><input type="checkbox" name="help" value="Suporte ao cliente — respostas inteligentes para dúvidas frequentes"><span class="label">Suporte ao cliente — respostas inteligentes para dúvidas frequentes</span></label>
-        <label class="choice"><input type="checkbox" name="help" value="Fluxos de atendimento personalizados — atendimento sob medida para o seu negócio"><span class="label">Fluxos de atendimento personalizados — atendimento sob medida para o seu negócio</span></label>
-        <label class="choice"><input type="checkbox" name="help" value="Automação de vendas — do primeiro contato até a conversão, direto no WhatsApp"><span class="label">Automação de vendas — do primeiro contato até a conversão, direto no WhatsApp</span></label>
+        <label class="choice"><input type="checkbox" name="help" value="Atendimento inicial automático"><span class="label">Atendimento inicial automático</span></label>
+        <label class="choice"><input type="checkbox" name="help" value="Agendamento de horários"><span class="label">Agendamento de horários</span></label>
+        <label class="choice"><input type="checkbox" name="help" value="Suporte ao cliente"><span class="label">Suporte ao cliente</span></label>
+        <label class="choice"><input type="checkbox" name="help" value="Fluxos de atendimento personalizados"><span class="label">Fluxos de atendimento personalizados</span></label>
+        <label class="choice"><input type="checkbox" name="help" value="Automação de venda"><span class="label">Automação de vendas</span></label>
         <label class="choice"><input type="checkbox" id="otherCheck" name="help" value="Outro"><span class="label">Outro</span></label>
       </div>
 
@@ -225,27 +216,41 @@
       if(on) otherText.focus(); else otherText.value="";
     });
 
-    const ENDPOINT = "https://script.google.com/macros/s/AKfycbw9HAYItLuQm7z9aThbJAgpDZQzMVHHSNowlbvLUOfb378QTt0FNAdtTNMRAINaTtS49g/exec";
+    const ENDPOINT = "https://script.google.com/macros/s/AKfycby4EAwhQIBI8h9GD7YK82lPohB1e5tgXg5qv8QP3JYap7e6iJutyV1wsKgs2P-QwrfDzA/exec";
     const form = document.getElementById('leadForm');
     const statusEl = document.getElementById('status');
     const submitBtn = document.getElementById('submitBtn');
     const spin = document.getElementById('spin');
 
-    function buildFormData(){
+    // Constrói os dados em URLSearchParams (compatível com sendBeacon)
+    function buildParams(token){
       const fd = new FormData(form);
       const helps = fd.getAll('help');
       const otherDetail = (fd.get('otherDetail') || '').trim();
-      if (helps.includes('Outro')) {
-        fd.delete('help');
-        helps.forEach(h => fd.append('help', h === 'Outro' && otherDetail ? `Outro: ${otherDetail}` : h));
+      const params = new URLSearchParams();
+
+      params.append('firstName', fd.get('firstName') || '');
+      params.append('lastName',  fd.get('lastName')  || '');
+      params.append('company',   fd.get('company')   || '');
+      params.append('segment',   fd.get('segment')   || '');
+      params.append('phone',     fd.get('phone')     || '');
+
+      if (helps.includes('Outro')){
+        helps.forEach(h => {
+          params.append('help', h === 'Outro' && otherDetail ? `Outro: ${otherDetail}` : h);
+        });
       } else {
-        fd.delete('otherDetail');
+        helps.forEach(h => params.append('help', h));
       }
-      fd.append('source','site-vamos-escalar-juntos');
-      fd.append('userAgent', navigator.userAgent);
-      fd.append('page', location.href);
-      fd.append('timestamp', new Date().toISOString());
-      return fd;
+
+      params.append('message',   fd.get('message') || '');
+      params.append('privacy',   fd.get('privacy') ? 'true' : '');
+      params.append('source',    'site-vamos-escalar-juntos');
+      params.append('userAgent', navigator.userAgent);
+      params.append('page',      location.href);
+      params.append('timestamp', new Date().toISOString());
+      params.append('recaptchaToken', token);
+      return params;
     }
 
     form.addEventListener('submit', async (e) => {
@@ -259,22 +264,22 @@
       spin.style.display = "inline-block";
 
       try {
+        // 1) Gera token (único passo “bloqueante”)
         const token = await getRecaptchaTokenFast("submit");
-        const fd = buildFormData();
-        fd.append('recaptchaToken', token);
 
-        const readable = fetch(ENDPOINT, { method:"POST", body: fd });
-        fetch(ENDPOINT, { method:"POST", body: fd, mode:"no-cors", keepalive:true });
+        // 2) Envia de forma instantânea (fire-and-forget)
+        const params = buildParams(token);
+        const sent = navigator.sendBeacon(ENDPOINT, params);
 
-        const result = await Promise.race([
-          readable.then(async r => ({ok: r.ok, txt: await r.text()})),
-          new Promise(res => setTimeout(()=>res({ok:true, txt:"NO-CORS-FALLBACK"}), 5000))
-        ]);
-
-        if (!result.ok || (result.txt && !String(result.txt).toUpperCase().includes("OK"))) {
-          console.warn("Resposta não legível, mas envio feito:", result.txt);
+        // 3) Fallback MUITO curto (1.5s) apenas para quem bloqueia beacon
+        if (!sent) {
+          await Promise.race([
+            fetch(ENDPOINT, { method:"POST", body: params, keepalive:true }),
+            new Promise(res => setTimeout(res, 1500))
+          ]);
         }
 
+        // Feedback imediato ao usuário
         statusEl.className = "ok";
         statusEl.textContent = "Recebido! Vamos falar com você em breve.";
         form.reset(); otherField.style.display='none'; otherText.disabled=true;
